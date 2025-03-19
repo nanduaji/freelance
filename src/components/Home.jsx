@@ -2,6 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap
 import styles from "./Home.module.css";
 import { Button } from "react-bootstrap";
+import { FaBed, FaUtensils, FaSpa, FaGift } from "react-icons/fa";
 
 function Home() {
     return (
@@ -23,11 +24,26 @@ function Home() {
                         />
                         <h1 className={`${styles.title} mt-3`}>Experience Luxury at Great Wall Hotel </h1>
                         <p className="lead limited-text">
-                           <b> With 870 exquisite rooms ranging from 600 AED to 4000 AED per day, City Grand Hotel
-                            offers unparalleled luxury and service, ideal for every traveler.
+                            <b> With 870 exquisite rooms ranging from 600 AED to 4000 AED per day, City Grand Hotel
+                                offers unparalleled luxury and service, ideal for every traveler.
                             </b>
                         </p>
                         <Button className={styles.custombutton}><b>Book Your Stay</b></Button>
+
+                        <Button className={`${styles.oppositebutton} mt-5`}>
+                            <FaBed className="me-2" /> <b>Explore Our Rooms</b>
+                        </Button>
+                        <Button className={`${styles.oppositebutton} mt-2`}>
+                            <FaUtensils className="me-2" /> <b>Dining Options</b>
+                        </Button>
+                        <Button className={`${styles.oppositebutton} mt-2`}>
+                            <FaSpa className="me-2" /> <b>Spa Services</b>
+                        </Button>
+                        <Button className={`${styles.oppositebutton} mt-2`}>
+                            <FaGift className="me-2" /> <b>Special Offers</b>
+                        </Button>
+
+
                     </div>
                 </div>
             </div>
