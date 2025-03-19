@@ -1,0 +1,81 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;  /* Use min-height instead of height */
+    background-color: #f2f9fe;
+    padding: 20px; /* Prevent content from touching edges */
+    width: 100%;
+}
+
+.secondcontainer {
+    border: 2px solid #f3f9fe;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+    max-width: 90%; /* Prevent it from being too wide */
+    overflow: hidden; /* Prevents content from overflowing */
+}
+
+.thirdcontainer {
+    border: 2px solid #fdfeff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 100%;
+}
+
+.firstimage {
+    width: 20%;
+    max-width: 300px; /* Set a max width */
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
+
+
+.secondcontainer:hover {
+    transform: scale(1.05); 
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+.title {
+    color: #65868b;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    font-family: "Poppins", sans-serif;
+}
+
+.limited-text {
+    font-size: 25px; /* Adjust font size */
+    font-family: "Poppins", sans-serif; /* Use a stylish font */
+    font-weight: 500; /* Medium weight for readability */
+    line-height: 1.4; /* Improve spacing */
+    max-width: 600px; /* Set a max width to prevent long lines */
+    overflow: hidden; /* Hide overflowing text */
+    display: -webkit-box; 
+    -webkit-line-clamp: 3; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis; /* Add "..." if text overflows */
+}
+.custombutton {
+    background-color: #65868b !important;
+    color: white !important;
+    border: 1px solid #65868b;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background 0.3s ease-in-out;
+    width: 80%;
+}
+
+.custombutton:hover {
+    background-color: white !important; 
+    color: black !important;
+    border: 1px solid #65868b !important;
+}
