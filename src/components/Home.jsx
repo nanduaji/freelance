@@ -27,7 +27,7 @@ function Home() {
                             offers unparalleled luxury and service, ideal for every traveler.
                             </b>
                         </p>
-                        <Button className={styles.custombutton}><b>Book Your Stays</b></Button>
+                        <Button className={styles.custombutton}><b>Book Your Stay</b></Button>
                     </div>
                 </div>
             </div>
