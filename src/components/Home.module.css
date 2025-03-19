@@ -96,4 +96,5 @@
 .oppositebutton:hover {
     background-color: #65868b !important;
     color: white !important;
+    border: 1px solid #65868b !important;
 }

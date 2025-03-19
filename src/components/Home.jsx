@@ -20,7 +20,7 @@ function Home() {
                             src="https://images.pexels.com/photos/161758/governor-s-mansion-montgomery-alabama-grand-staircase-161758.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
                             alt="Mansion"
                             className="img-fluid rounded mt-3"
-                            style={{ width: "2500px", height: "auto" }}
+                            style={{ width: "100%", maxWidth: "1200px", height: "auto" }}
                         />
                         <h1 className={`${styles.title} mt-3`}>Experience Luxury at Great Wall Hotel </h1>
                         <p className="lead limited-text">
