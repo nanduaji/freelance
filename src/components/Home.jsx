@@ -5,8 +5,9 @@ import { Button } from "react-bootstrap";
 import { FaBed, FaUtensils, FaSpa, FaGift } from "react-icons/fa";
 
 function Home() {
+
     return (
-        <div className={`container-fluid ${styles.container}`}>
+        <div className={`container-fluid ${styles.container} mt-5`}>
             <div className={`row justify-content-center`}>
                 <div className={`col-md-6 col-lg-4 ${styles.secondcontainer} p-4`}>
                     <div className={`text-center ${styles.thirdcontainer}`}>
@@ -23,11 +24,19 @@ function Home() {
                             style={{ width: "100%", maxWidth: "1200px", height: "auto" }}
                         />
                         <h1 className={`${styles.title} mt-3`}>Experience Luxury at Great Wall Hotel </h1>
-                        <p className="lead limited-text">
+                        <p className="lead limited-text" style={{
+                            fontFamily: "'Cormorant Garamond', serif",
+                            fontSize: "22px",
+                            fontWeight: "400",
+                            color: "#2c2c2c",
+                            lineHeight: "1.7",
+                            letterSpacing: "0.5px"
+                        }}>
                             <b> With 870 exquisite rooms ranging from 600 AED to 4000 AED per day, City Grand Hotel
                                 offers unparalleled luxury and service, ideal for every traveler.
                             </b>
                         </p>
+
                         <Button className={styles.custombutton}><b>Book Your Stay</b></Button>
 
                         <Button className={`${styles.oppositebutton} mt-5`}>

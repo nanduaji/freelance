@@ -1,3 +1,4 @@
+
 .container {
     display: flex;
     flex-direction: column;
@@ -6,7 +7,7 @@
     min-height: 100vh;  /* Use min-height instead of height */
     background-color: #f2f9fe;
     padding: 20px; /* Prevent content from touching edges */
-    width: 100%;
+    width: 50%;
 }
 
 .secondcontainer {
@@ -40,9 +41,9 @@
 }
 
 
-.secondcontainer:hover {
-    transform: scale(1.05); 
-    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
+.container:hover {
+    transform: scale(1.05);
+     box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
     cursor: pointer;
 }
 .title {
@@ -54,17 +55,9 @@
 }
 
 .limited-text {
-    font-size: 25px; /* Adjust font size */
-    font-family: "Poppins", sans-serif; /* Use a stylish font */
-    font-weight: 500; /* Medium weight for readability */
-    line-height: 1.4; /* Improve spacing */
-    max-width: 600px; /* Set a max width to prevent long lines */
-    overflow: hidden; /* Hide overflowing text */
-    display: -webkit-box; 
-    -webkit-line-clamp: 3; /* Limit to 3 lines */
-    -webkit-box-orient: vertical;
-    text-overflow: ellipsis; /* Add "..." if text overflows */
+    
 }
+
 .custombutton {
     background-color: #65868b !important;
     color: white !important;
@@ -102,6 +95,9 @@
 }
 
 @media (max-width: 768px) {
+    .container{
+        width:90%
+    }
     .secondcontainer {
         width: 100%;
         padding: 15px;
@@ -130,5 +126,3 @@
         font-size: 14px; /* Adjust button text size */
     }
 }
-
-
