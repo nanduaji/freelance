@@ -16,6 +16,8 @@
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
     max-width: 90%; /* Prevent it from being too wide */
     overflow: hidden; /* Prevents content from overflowing */
+    max-width: 100%; /* Increase width */
+    width: 70%; 
 }
 
 .thirdcontainer {
@@ -45,7 +47,7 @@
 }
 .title {
     color: #65868b;
-    font-size: 24px;
+    font-size: 35px;
     font-weight: bold;
     text-align: center;
     font-family: "Poppins", sans-serif;
@@ -71,7 +73,7 @@
     font-size: 16px;
     border-radius: 5px;
     transition: background 0.3s ease-in-out;
-    width: 80%;
+    width: 100%;
 }
 
 .custombutton:hover {
@@ -88,7 +90,7 @@
     font-size: 16px;
     border-radius: 5px;
     transition: background 0.3s ease-in-out, border 0.3s ease-in-out, color 0.3s ease-in-out;
-    width: 80%;
+    width: 100%;
     cursor: pointer;
     margin-top: 20px; /* Add spacing */
 }
@@ -98,3 +100,35 @@
     color: white !important;
     border: 1px solid #65868b !important;
 }
+
+@media (max-width: 768px) {
+    .secondcontainer {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .thirdcontainer {
+        padding: 15px;
+    }
+
+    .firstimage {
+        width: 30%; /* Increase width on small screens */
+        max-width: 300px;
+    }
+
+    .title {
+        font-size: 28px; /* Slightly smaller font for mobile */
+    }
+
+    .limited-text {
+        font-size: 18px; /* Reduce text size */
+        max-width: 100%;
+    }
+
+    .custombutton, .oppositebutton {
+        width: 100%;
+        font-size: 14px; /* Adjust button text size */
+    }
+}
+
+
