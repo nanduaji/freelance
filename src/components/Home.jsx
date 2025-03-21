@@ -1,11 +1,17 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap
 import styles from "./Home.module.css";
 import { Button } from "react-bootstrap";
 import { FaBed, FaUtensils, FaSpa, FaGift, FaBook, FaCalendarCheck } from "react-icons/fa";
 
 function Home() {
+    const navigate = useNavigate();
 
+const handleBookNow = () => {
+    navigate("/payment");
+};
     return (
         <div className={`container-fluid ${styles.container} mt-5`}>
             <div className={`row justify-content-center`}>
@@ -37,7 +43,7 @@ function Home() {
                             </b>
                         </p>
 
-                        <Button className={styles.custombutton}><b>Book Your Stay</b></Button>
+                        <Button className={styles.custombutton} onClick={handleBookNow}><b>Book Your Stay</b></Button>
 
                         <Button className={`${styles.oppositebutton} mt-5`}>
                             <FaBed className="me-2" /> <b>Explore Our Rooms</b>
