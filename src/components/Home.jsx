@@ -9,9 +9,9 @@ import { FaBed, FaUtensils, FaSpa, FaGift, FaBook, FaCalendarCheck } from "react
 function Home() {
     const navigate = useNavigate();
 
-const handleBookNow = () => {
-    navigate("/payment");
-};
+    const handleBookNow = () => {
+        navigate("/payment");
+    };
     return (
         <div className={`container-fluid ${styles.container} mt-5`}>
             <div className={`row justify-content-center`}>
@@ -98,7 +98,7 @@ const handleBookNow = () => {
                                         <div className="card-body">
                                             <h5 className="card-title">Fine Dining</h5>
                                             <p className="card-text">
-                                            Savor gourmet meals prepared by top chefs in our world-class restaurant, offering international cuisine.
+                                                Savor gourmet meals prepared by top chefs in our world-class restaurant, offering international cuisine.
 
                                             </p>
                                             <p className="card-text">
@@ -124,7 +124,7 @@ const handleBookNow = () => {
                                             <h5 className="card-title">Spa & Wellness
                                             </h5>
                                             <p className="card-text">
-                                            Indulge in relaxing treatments at our upscale spa, designed to refresh and rejuvenate your body and mind.
+                                                Indulge in relaxing treatments at our upscale spa, designed to refresh and rejuvenate your body and mind.
                                             </p>
                                             <p className="card-text">
                                                 <h3 className="text-muted"> $ 50</h3>
@@ -149,7 +149,7 @@ const handleBookNow = () => {
                                             <h5 className="card-title">Conference Facilities
                                             </h5>
                                             <p className="card-text">
-                                            Host your events in our fully equipped conference rooms, suitable for business meetings and gatherings.
+                                                Host your events in our fully equipped conference rooms, suitable for business meetings and gatherings.
                                             </p>
                                             <p className="card-text">
                                                 <h3 className="text-muted"> $ 50</h3>
@@ -174,7 +174,7 @@ const handleBookNow = () => {
                                             <h5 className="card-title">Pool and Recreation
                                             </h5>
                                             <p className="card-text">
-                                            Relax and unwind at our stunning outdoor pool and recreation area, perfect for leisure and family fun.
+                                                Relax and unwind at our stunning outdoor pool and recreation area, perfect for leisure and family fun.
 
                                             </p>
                                             <p className="card-text">
@@ -186,6 +186,57 @@ const handleBookNow = () => {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div className="mt-5">
+                            <h1 style={{ color: '#527577' }}>Welcome to Great Wall Hotel, Your Luxury Oasis</h1>
+                            <img
+                                src="coverphoto.jpeg"
+                                alt="Cover Photo"
+                                className="img-fluid rounded mt-3"
+                                style={{ width: "100%", maxWidth: "1200px", height: "auto" }}
+                            />
+                            <p className="lead limited-text mt-3" style={{
+                                fontFamily: "'Cormorant Garamond', serif",
+                                fontSize: "22px",
+                                fontWeight: "400",
+                                color: "#2c2c2c",
+                                lineHeight: "1.7",
+                                letterSpacing: "0.5px"
+                            }}>
+                                <b> Founded with the vision to provide a world-class hospitality experience, City Grand Hotel stands out for its luxurious accommodations and exceptional services. Our commitment to excellence ensures that every guest receives personalized attention, making their stay memorable.
+                                </b>
+                            </p>
+                            <Button className={styles.custombutton} ><b>Discover More</b></Button>
+                        </div>
+                        <div className="mt-5 text-center">
+                            <h1 style={{ color: '#527577' }}>Gallery Of Excellence And Comfort</h1>
+                            <div className="container py-4">
+                                <div className="row justify-content-center">
+                                    {[
+                                        { src: "card1.jpeg", text: "A beautifully designed hotel room with stunning views." },
+                                        { src: "card2.jpeg", text: "Guests enjoying a gourmet dining experience in our restaurant." },
+                                        { src: "card3.jpeg", text: "Tranquil spa treatment room ready for relaxation." },
+                                        { src: "card4.jpeg", text: "A well-arranged conference room during a business event." },
+                                        { src: "card5.jpeg", text: "Refreshing outdoor swimming pool area for guests." },
+                                        { src: "card6.webp", text: "Spacious and inviting lobby area for guests." }
+                                    ].map((item, index) => (
+                                        <div key={index} className="col-12 col-md-6 col-lg-6 d-flex justify-content-center mb-4">
+                                            <div className="p-3" style={{ width: '20rem', border: 'none', overflow: 'hidden' }}>
+                                                <img
+                                                    className="card-img-top"
+                                                    src={item.src}
+                                                    alt="Gallery item"
+                                                    style={{ height: '300px', borderRadius: '10px', objectFit: 'cover' }}
+                                                />
+                                                <div className="card-body d-flex align-items-center justify-content-center">
+                                                    <p className="card-text text-center">{item.text}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
                             </div>
                         </div>
 
