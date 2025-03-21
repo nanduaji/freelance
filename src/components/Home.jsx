@@ -238,9 +238,24 @@ function Home() {
                                 </div>
 
                             </div>
+                            <Button className={styles.custombutton} ><b>See All Pictures</b></Button>
                         </div>
 
+                        <div className="mt-5" style={{ backgroundColor: "#527577" }}>
+                            <h1 style={{ color: 'white', padding: '20px', wordWrap: 'break-word' }}>
+                                Book Your Luxurious Escape <br /> Today
+                            </h1>
+                            <p className="large p-2 mb-2" style={{ color: 'white' }}>Don't miss out on a chance to indulge in unparalleled luxury and comfort. Reserve your room now to experience all that City Grand Hotel has to offer.</p>
+                            <Button
+                                className={`${styles.oppositebutton} mt-5 mb-5`}
+                                style={{
+                                    width:'50%'
+                                }}
+                            >
+                                <FaCalendarCheck /> <span>Reserve Now</span>
+                            </Button>
 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -249,3 +264,4 @@ function Home() {
 }
 
 export default Home;
+

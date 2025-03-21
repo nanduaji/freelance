@@ -93,6 +93,7 @@ body {
     margin-top: 20px; /* Add spacing */
 }
 
+
 .oppositebutton:hover {
     background-color: #65868b !important;
     color: white !important;
@@ -136,4 +137,3 @@ body {
     flex-direction: column;
     justify-content: space-between;
 }
-
