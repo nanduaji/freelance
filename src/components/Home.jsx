@@ -383,7 +383,7 @@ function Home() {
                             </Button>
                         </div>
                         <div className="mt-5 text-center">
-                            <h2 className="text-center">OR</h2>
+                            <h2 className={`${styles.title} mt-3 fw-bold mb-4`}>OR</h2>
                             <form className="mt-4 mx-auto" style={{ maxWidth: "500px" }}>
                                 <div className="mb-3">
                                     <label htmlFor="name" className="form-label"></label>
@@ -418,11 +418,11 @@ function Home() {
                             </form>
                         </div>
                         <div className="mt-5  text-center" style={{ backgroundColor: "#e2edec" }}>
-                            
+
 
                             {/* Contact Details */}
                             <div className="container p-5">
-                            <h1 className={`${styles.title} mt-3 fw-bold mb-4`}>Reach Out To Us Here</h1>
+                                <h1 className={`${styles.title} mt-3 fw-bold mb-4`}>Reach Out To Us Here</h1>
                                 <div className="row justify-content-center">
                                     {[
                                         { icon: <FaPhone size={30} />, title: "Phone", value: "+1 234 567 890" },
