@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap
 import styles from "./Home.module.css";
 import { Button } from "react-bootstrap";
-import { FaBed, FaUtensils, FaSpa, FaGift, FaBook, FaCalendarCheck } from "react-icons/fa";
+import { FaBed, FaUtensils, FaSpa, FaGift, FaBook, FaCalendarCheck, FaWhatsapp } from "react-icons/fa";
 
 function Home() {
     const navigate = useNavigate();
@@ -12,6 +12,32 @@ function Home() {
     const handleBookNow = () => {
         navigate("/payment");
     };
+    const testimonials = [
+        {
+            src: "John.webp",
+            text: "A beautifully designed hotel room with stunning views.",
+            name: "John Doe",
+            designation: "Travel Blogger",
+        },
+        {
+            src: "Sarah.jpeg",
+            text: "Guests enjoying a gourmet dining experience in our restaurant.",
+            name: "Sarah Smith",
+            designation: "Food Critic",
+        },
+        {
+            src: "Emily.webp",
+            text: "Tranquil spa treatment room ready for relaxation.",
+            name: "Emily White",
+            designation: "Wellness Coach",
+        },
+        {
+            src: "Michael.avif",
+            text: "A well-arranged conference room during a business event.",
+            name: "Michael Brown",
+            designation: "Event Coordinator",
+        },
+    ];
     return (
         <div className={`container-fluid ${styles.container} mt-5`}>
             <div className={`row justify-content-center`}>
@@ -249,10 +275,92 @@ function Home() {
                             <Button
                                 className={`${styles.oppositebutton} mt-5 mb-5`}
                                 style={{
-                                    width:'50%'
+                                    width: '50%'
                                 }}
                             >
                                 <FaCalendarCheck /> <span>Reserve Now</span>
+                            </Button>
+
+                        </div>
+                        <div
+                            className="py-5"
+                            style={{
+                                background: "linear-gradient(to right, #f8f9fa, #e2edec)",
+                            }}
+                        >
+                            <h1 className={`${styles.title} mt-3 text-center fw-bold mb-4`} >
+                                What Our Guests Are Saying
+                            </h1>
+                            <div className="container">
+                                <div className="row justify-content-center">
+                                    {testimonials.map((item, index) => (
+                                        <div key={index} className="col-12 col-md-8 col-lg-6 mb-4">
+                                            <div
+                                                className="card p-4 border-0 shadow-lg"
+                                                style={{
+                                                    background: "white",
+                                                    borderRadius: "15px",
+                                                }}
+                                            >
+                                                <p
+                                                    className="card-text mb-3 text-muted"
+                                                    style={{
+                                                        fontStyle: "italic",
+                                                        fontSize: "1.1rem",
+                                                        lineHeight: "1.6",
+                                                        fontFamily: "'Merriweather', serif",
+                                                    }}
+                                                >
+                                                    “{item.text}”
+                                                </p>
+                                                <div className="d-flex align-items-center">
+                                                    {/* Bootstrap Avatar */}
+                                                    <img
+                                                        src={item.src}
+                                                        alt={item.name}
+                                                        className="rounded-circle border"
+                                                        style={{
+                                                            width: 60,
+                                                            height: 60,
+                                                            objectFit: "cover",
+                                                            border: "3px solid #c9a227",
+                                                            marginRight: 15,
+                                                        }}
+                                                    />
+                                                    <div>
+                                                        <h6 className="mb-1 fw-bold">{item.name}</h6>
+                                                        <span
+                                                            className="badge"
+                                                            style={{
+                                                                backgroundColor: "#c9a227",
+                                                                color: "white",
+                                                                padding: "6px 10px",
+                                                                borderRadius: "10px",
+                                                                fontSize: "0.9rem",
+                                                            }}
+                                                        >
+                                                            {item.designation}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-5">
+                            <h1 className={`${styles.title} mt-3 text-center fw-bold mb-4`}>
+                                Get In Touch with Us
+                            </h1>
+                            <Button
+                                className={`${styles.custombutton} `}
+                                style={{
+                                    width: "60%",
+                                    padding: "10px 15px",
+                                }}
+                            >
+                                <FaWhatsapp size={20} /> <b>Connect On Whatsapp</b>
                             </Button>
 
                         </div>
