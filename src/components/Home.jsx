@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap
 import styles from "./Home.module.css";
 import { Button } from "react-bootstrap";
-import { FaBed, FaUtensils, FaSpa, FaGift, FaBook, FaCalendarCheck, FaWhatsapp } from "react-icons/fa";
+import { FaBed, FaUtensils, FaSpa, FaGift, FaBook, FaCalendarCheck, FaWhatsapp, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 function Home() {
     const navigate = useNavigate();
@@ -12,6 +12,25 @@ function Home() {
     const handleBookNow = () => {
         navigate("/payment");
     };
+    const [mapSize, setMapSize] = useState({
+        width: "90%",
+        height: "250px",
+    });
+
+    useEffect(() => {
+        const updateSize = () => {
+            if (window.innerWidth > 768) {
+                setMapSize({ width: "500px", height: "350px" });
+            } else {
+                setMapSize({ width: "100%", height: "250px" });
+            }
+        };
+
+        updateSize();
+        window.addEventListener("resize", updateSize);
+
+        return () => window.removeEventListener("resize", updateSize);
+    }, []);
     const testimonials = [
         {
             src: "John.webp",
@@ -362,8 +381,105 @@ function Home() {
                             >
                                 <FaWhatsapp size={20} /> <b>Connect On Whatsapp</b>
                             </Button>
-
                         </div>
+                        <div className="mt-5 text-center">
+                            <h2 className="text-center">OR</h2>
+                            <form className="mt-4 mx-auto" style={{ maxWidth: "500px" }}>
+                                <div className="mb-3">
+                                    <label htmlFor="name" className="form-label"></label>
+                                    <input
+                                        type="text"
+                                        className="form-control mx-auto"
+                                        id="name"
+                                        placeholder="Enter your name"
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="email" className="form-label"></label>
+                                    <input
+                                        type="email"
+                                        className="form-control mx-auto"
+                                        id="email"
+                                        placeholder="Enter your email"
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="message" className="form-label"></label>
+                                    <textarea
+                                        className="form-control mx-auto"
+                                        id="message"
+                                        rows="4"
+                                        placeholder="Enter your message"
+                                    ></textarea>
+                                </div>
+                                <Button type="submit" className={`${styles.custombutton} w-100`}>
+                                    Submit
+                                </Button>
+                            </form>
+                        </div>
+                        <div className="mt-5  text-center" style={{ backgroundColor: "#e2edec" }}>
+                            
+
+                            {/* Contact Details */}
+                            <div className="container p-5">
+                            <h1 className={`${styles.title} mt-3 fw-bold mb-4`}>Reach Out To Us Here</h1>
+                                <div className="row justify-content-center">
+                                    {[
+                                        { icon: <FaPhone size={30} />, title: "Phone", value: "+1 234 567 890" },
+                                        { icon: <FaEnvelope size={30} />, title: "Gmail", value: "contact@example.com" },
+                                        { icon: <FaMapMarkerAlt size={30} />, title: "Location", value: "123 Street, City, Country" },
+                                        { icon: <FaClock size={30} />, title: "Timing", value: "Mon-Fri: 9AM - 6PM" },
+                                    ].map((item, index) => (
+                                        <div key={index} className="col-md-5 col-12 d-flex flex-column align-items-center mb-4">
+                                            <div className="p-3 bg-white rounded-circle shadow d-flex align-items-center justify-content-center" style={{ width: "60px", height: "60px" }}>
+                                                {item.icon}
+                                            </div>
+                                            <h5 className="mt-3 fw-bold" style={{ color: "#65868b" }}>{item.title}</h5>
+                                            <p className="text-muted">{item.value}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Map Section */}
+                            <div className="container mt-4">
+                                <div className="row justify-content-center">
+                                    <div className="col-md-10 col-12">
+                                        <div style={{ width: "100%", margin: "0 auto" }}>
+                                            <iframe
+                                                title="Google Map"
+                                                className="map"
+                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345093745!2d144.95373631590414!3d-37.817209979751675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0x5045675218ce6e0!2sMelbourne%20VIC%2C%20Australia!5e0!3m2!1sen!2sus!4v1614842851053!5m2!1sen!2sus"
+                                                style={{
+                                                    width: mapSize.width,
+                                                    height: mapSize.height,
+                                                    border: "0",
+                                                    borderRadius: "10px",
+                                                    boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
+                                                    display: "block",
+                                                    margin: "0 auto",
+                                                }}
+                                                allowFullScreen=""
+                                                loading="lazy"
+                                            ></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Social Media Icons */}
+                            <div className="mt-4 p-5">
+                                <h5 className="fw-bold" style={{ color: "#65868b" }}>Follow Us</h5>
+                                <div className="d-flex justify-content-center gap-3 mt-3">
+                                    <a href="#" className="text-dark"><FaFacebook size={30} /></a>
+                                    <a href="#" className="text-dark"><FaTwitter size={30} /></a>
+                                    <a href="#" className="text-dark"><FaInstagram size={30} /></a>
+                                    <a href="#" className="text-dark"><FaLinkedin size={30} /></a>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </div>

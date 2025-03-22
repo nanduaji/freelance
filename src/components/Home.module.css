@@ -136,6 +136,9 @@ html, body {
         width: 100%;
         font-size: 14px; /* Adjust button text size */
     }
+    .map{
+        height:'100px'
+    }
 }
 .card-body {
     display: flex;
