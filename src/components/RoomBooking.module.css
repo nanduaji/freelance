@@ -68,6 +68,40 @@
   background: gray;
 }
 
-.booking-heading {
-    /*  */
+.room-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  width: 100%;
+  max-width: 400px; /* Limit the card size for better appearance */
+  margin: 0 auto; /* Center the card horizontally */
+  border-radius: 10px; /* Add rounded corners for a modern look */
+  overflow: hidden; /* Ensures no content spills outside rounded corners */
 }
+
+.room-card:hover {
+  transform: scale(1.05); /* Slight tilt effect */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background-color: #f7f7f7; /* Subtle background color change on hover */
+}
+
+.room-card img {
+  transition: transform 0.3s ease;
+}
+
+.room-card:hover img {
+  transform: scale(1.0); /* Slight zoom-in effect on image */
+}
+
+.card-body {
+  padding: 20px; /* Add padding inside the card */
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.card-text {
+  font-size: 0.95rem;
+  color: #666;
+}
+

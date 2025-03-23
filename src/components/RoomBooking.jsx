@@ -4,7 +4,7 @@ import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "animate.css";
-import "./RoomBooking.module.css";
+import styles from "./RoomBooking.module.css";
 import { FaBed, FaCalendarAlt, FaUser, FaEnvelope, FaPhone } from "react-icons/fa";
 
 const roomTypes = [
@@ -18,7 +18,8 @@ const roomTypes = [
             "Flat-screen TV",
             "Mini-bar",
             "24/7 room service"
-        ]
+        ],
+        price: "100"
     },
     {
         name: "Presidential Suite",
@@ -30,7 +31,8 @@ const roomTypes = [
             "Personal butler service",
             "Complimentary breakfast",
             "High-speed internet"
-        ]
+        ],
+        price: "150"
     },
     {
         name: "Luxury Villa",
@@ -42,7 +44,8 @@ const roomTypes = [
             "Fully equipped kitchen",
             "Outdoor seating area",
             "Smart home automation"
-        ]
+        ],
+        price: "200"
     },
 ];
 
@@ -72,30 +75,34 @@ const RoomBooking = () => {
         setTimeout(() => navigate("/payment"), 2000);
     };
 
+    const handleSelectRoom = (room) => {
+        // Stringify the room object before storing it in localStorage
+        localStorage.setItem("room", JSON.stringify(room));
+        // Update the room type in formData based on selected room
+        setFormData((prevData) => ({
+            ...prevData,
+            roomType: room.name
+        }));
+    };
+
     return (
-        <Container className="d-flex flex-column justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
-            <h1
-                className="text-center mb-4 booking-heading"
-                style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontSize: "2.5rem",
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                    letterSpacing: "1.5px",
-                    color: "#333",
-                }}
-            >
+        <Container className="d-flex flex-column justify-content-center align-items-center mt-5" style={{ minHeight: "100vh" }}>
+            <h1 className="text-center mb-4 booking-heading">
                 Book Your Stay With Us
             </h1>
-
 
             <Row className="w-100">
                 <Col md={6} className="overflow-auto" style={{ maxHeight: "90vh" }}>
                     {roomTypes.map((room) => (
-                        <Card key={room.name} className="mb-3 shadow-sm">
+                        <Card
+                            key={room.name}
+                            className={`mb-3 shadow-sm ${styles['room-card']}`}
+                            onClick={() => handleSelectRoom(room)}
+                            style={{cursor:'pointer'}}
+                        >
                             <Card.Img variant="top" src={room.image} alt={room.name} />
                             <Card.Body>
-                                <Card.Title>{room.name}</Card.Title>
+                                <Card.Title>{room.name} - ${room.price}</Card.Title>
                                 <Card.Text>{room.description}</Card.Text>
                                 <ul>
                                     {room.amenities.map((amenity, index) => (
@@ -106,6 +113,7 @@ const RoomBooking = () => {
                         </Card>
                     ))}
                 </Col>
+
                 <Col md={6}>
                     <div style={{ position: "sticky", top: "20px" }}>
                         <Card className="shadow-lg p-4 rounded animate__animated animate__fadeInUp">
@@ -152,9 +160,11 @@ const RoomBooking = () => {
                                         <Col md={6}>
                                             <Form.Group className="mb-3">
                                                 <Form.Label><FaBed /> Room Type</Form.Label>
-                                                <Form.Select name="roomType" value={formData.roomType} onChange={handleChange}>
+                                                <Form.Select name="roomType" value={formData.roomType} onChange={handleChange} disabled>
                                                     {roomTypes.map((room) => (
-                                                        <option key={room.name}>{room.name}</option>
+                                                        <option key={room.name} value={room.name}>
+                                                            {room.name}
+                                                        </option>
                                                     ))}
                                                 </Form.Select>
                                             </Form.Group>

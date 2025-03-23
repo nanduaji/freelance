@@ -41,6 +41,7 @@
   }
   
   .pay-button:hover {
+    cursor:'pointer';
     background: linear-gradient(135deg, #ff6600, #ffcc00);
     transform: scale(1.05);
   }
@@ -51,4 +52,23 @@
     align-items: center;
     min-height: 100vh;
   }
+  .payment-option-card {
+    min-height: 150px; /* Ensures uniform height */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer; /* 🔥 Makes the card clickable */
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .payment-option-card:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+  }
+  
+  .payment-icon {
+    font-size: 2rem; /* Ensures icons are always uniform */
+  }
+  
   

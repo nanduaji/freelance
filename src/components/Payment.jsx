@@ -1,15 +1,84 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Button, Card, Container, Spinner, ProgressBar, Alert } from "react-bootstrap";
+import { Modal, Button, Card, Container, Spinner, ProgressBar, Alert, Row, Col, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { toast } from "react-toastify";
 import Confetti from "react-confetti";
 import "react-toastify/dist/ReactToastify.css";
-import "./Payment.module.css"; // Importing custom styling
+import "./Payment.module.css";
+import { motion } from "framer-motion";
+import { PaymentRequestButtonElement } from "@stripe/react-stripe-js";
 
 const stripeKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(stripeKey);
+
+// Payment options as before
+
+
+const paymentOptions = [
+  { id: "card", name: "Card", icon: "💳" },
+  { id: "apple_pay", name: "Apple Pay", icon: "🍏" },
+  { id: "google_pay", name: "Google Pay", icon: "📱" },
+  { id: "paypal", name: "PayPal", icon: "🅿️" },
+  { id: "crypto", name: "Crypto", icon: "₿" },
+  { id: "bank_transfer", name: "Bank", icon: "🏦" },
+];
+
+const PaymentOptionsModal = ({ onSelect }) => {
+  return (
+    <Modal show centered backdrop="static" className="luxury-modal">
+      <Modal.Header className="luxury-modal-header">
+        <Modal.Title className="fw-bold text-gold">🌍 Choose Your Payment Method</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Row className="g-4 justify-content-center">
+          {paymentOptions.map((option) => (
+            <Col key={option.id} xs={6} sm={4} className="text-center">
+              <motion.div
+                whileHover={{ scale: 1.1, boxShadow: "0px 10px 30px rgba(255, 215, 0, 0.6)" }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 200 }}
+              >
+                <Card
+                  className="payment-option-card glass-effect d-flex flex-column align-items-center justify-content-center"
+                  onClick={() => onSelect(option.id)} // Ensure clicking a card selects a payment method
+                  style={{ cursor: "pointer" }} // Makes the card clickable
+                >
+                  <Card.Body className="p-4 text-center">
+                    <div className="payment-icon">{option.icon}</div>
+                    <p className="fw-bold text-gold mt-3">{option.name}</p>
+                  </Card.Body>
+                </Card>
+              </motion.div>
+            </Col>
+          ))}
+        </Row>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const RoomDetailsCard = () => {
+  const roomPrice = JSON.parse(localStorage.getItem("room"))?.price
+  const roomName = localStorage.getItem("roomName"); // Assuming the room name is stored
+  const roomDescription = localStorage.getItem("roomDescription"); // Assuming the room description is stored
+
+  return (
+    <Card className="room-details-card glassmorphism-card mb-4 mt-5">
+      <Card.Body>
+        <Card.Title className="text-center fw-bold">{roomName}</Card.Title>
+        <Card.Text className="text-center text-muted">{roomDescription}</Card.Text>
+        <div className="d-flex justify-content-center align-items-center">
+          <p className="fw-bold text-gold me-2">
+            Price: 
+          </p>
+          <p className="fs-3 fw-bold text-success">${roomPrice}</p>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
 
 const CheckoutForm = ({ clientSecret }) => {
   const { handleSubmit } = useForm();
@@ -18,57 +87,52 @@ const CheckoutForm = ({ clientSecret }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [progress, setProgress] = useState(0);
-
   const [success, setSuccess] = useState(false);
-const [showConfetti, setShowConfetti] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
-const onSubmit = async () => {
-  if (!stripe || !elements || !clientSecret) return;
-  setLoading(true);
-  setError(null);
-  setProgress(30);
+  const onSubmit = async () => {
+    if (!stripe || !elements || !clientSecret) return;
+    setLoading(true);
+    setError(null);
+    setProgress(30);
 
-  try {
-    const cardElement = elements.getElement(CardElement);
-    setProgress(60);
+    try {
+      const cardElement = elements.getElement(CardElement);
+      setProgress(60);
 
-    const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: { card: cardElement },
-    });
+      const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: { card: cardElement },
+      });
 
-    setLoading(false);
-    setProgress(100);
+      setLoading(false);
+      setProgress(100);
 
-    if (error) {
-      setError(error.message);
-      toast.error(`❌ Payment failed: ${error.message}`, { autoClose: 5000 });
-    } else {
-      setSuccess(true);
-      setShowConfetti(true); // Start confetti
-      toast.success("🎉 Payment successful!", { autoClose: 5000 });
+      if (error) {
+        setError(error.message);
+        toast.error(`❌ Payment failed: ${error.message}`, { autoClose: 5000 });
+      } else {
+        setSuccess(true);
+        setShowConfetti(true);
+        toast.success("🎉 Payment successful!", { autoClose: 5000 });
 
-      // Stop confetti after 10 seconds
-      setTimeout(() => {
-        setShowConfetti(false);
-      }, 10000);
+        setTimeout(() => {
+          setShowConfetti(false);
+        }, 10000);
+      }
+    } catch (err) {
+      setError("Something went wrong.");
+      toast.error("❌ Payment failed. Please try again.", { autoClose: 5000 });
+      console.error("Payment error:", err);
     }
-  } catch (err) {
-    setError("Something went wrong.");
-    toast.error("❌ Payment failed. Please try again.", { autoClose: 5000 });
-    console.error("Payment error:", err);
-  }
-};
-
+  };
 
   return (
     <Container className="payment-container">
       {showConfetti && <Confetti />}
-
-
-      <Card className="payment-card">
+      <RoomDetailsCard /> {/* Include the room details here */}
+      <Card className="payment-card glassmorphism-card">
         <Card.Body>
           <Card.Title className="text-center payment-title">💳 Secure Premium Payment</Card.Title>
-
           <Form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Form.Group className="mb-3">
               <Form.Label className="fw-bold">Card Details</Form.Label>
@@ -77,8 +141,8 @@ const onSubmit = async () => {
               </div>
             </Form.Group>
 
-            {error && <Alert variant="danger" className="text-center">{error}</Alert>}
-            {success && <Alert variant="success" className="text-center fw-bold">✅ Payment successful!</Alert>}
+            {error && <Alert variant="danger" className="text-center fade-in">{error}</Alert>}
+            {success && <Alert variant="success" className="text-center fw-bold fade-in">✅ Payment successful!</Alert>}
 
             {loading && <ProgressBar now={progress} animated striped variant="success" className="mb-3" />}
 
@@ -96,13 +160,19 @@ const onSubmit = async () => {
 
 const Payment = () => {
   const [clientSecret, setClientSecret] = useState("");
+  const [selectedPayment, setSelectedPayment] = useState(null);
   const clientSecretRef = useRef("");
 
   useEffect(() => {
+    if (!selectedPayment) return;
+    const roomDetails = JSON.parse(localStorage.getItem("room"));
+    console.log("Room Details:", roomDetails);
+
+    let amount = roomDetails.price
     fetch("http://localhost:3001/api/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: 100000 }),
+      body: JSON.stringify({ amount: amount }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -119,16 +189,24 @@ const Payment = () => {
         console.error("Error fetching clientSecret:", err);
         toast.error("❌ Error fetching payment details!", { autoClose: 5000 });
       });
-  }, []);
+  }, [selectedPayment]);
 
+  // Show payment options first
+  if (!selectedPayment) {
+    return <PaymentOptionsModal onSelect={setSelectedPayment} />;
+  }
+
+  // Show loading spinner while fetching the client secret
   if (!clientSecret) {
     return (
-      <Container className="loading-container">
+      <Container className="loading-container text-center mt-5">
         <Spinner animation="border" variant="primary" />
+        <p className="mt-3 text-muted">Preparing secure payment...</p>
       </Container>
     );
   }
 
+  // Show checkout form when ready
   return (
     <Elements stripe={stripePromise} options={{ clientSecret }}>
       <CheckoutForm clientSecret={clientSecret} />
