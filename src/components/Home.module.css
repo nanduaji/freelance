@@ -105,7 +105,7 @@ html, body {
     border: 1px solid #65868b !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
     .container{
         width:100%
     }

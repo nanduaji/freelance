@@ -1,127 +1,138 @@
-import React from "react";
-import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
+import React, { useState, useEffect, useRef } from "react";
+import { Form, Button, Card, Container, Spinner, ProgressBar, Alert } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import { toast } from "react-toastify";
+import Confetti from "react-confetti";
+import "react-toastify/dist/ReactToastify.css";
+import "./Payment.module.css"; // Importing custom styling
 
-const Payment = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+const stripeKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
+const stripePromise = loadStripe(stripeKey);
 
-  const onSubmit = (data) => {
-    console.log("Payment Details:", data);
-    alert("Payment submitted successfully!");
-  };
+const CheckoutForm = ({ clientSecret }) => {
+  const { handleSubmit } = useForm();
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [progress, setProgress] = useState(0);
+
+  const [success, setSuccess] = useState(false);
+const [showConfetti, setShowConfetti] = useState(false);
+
+const onSubmit = async () => {
+  if (!stripe || !elements || !clientSecret) return;
+  setLoading(true);
+  setError(null);
+  setProgress(30);
+
+  try {
+    const cardElement = elements.getElement(CardElement);
+    setProgress(60);
+
+    const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: { card: cardElement },
+    });
+
+    setLoading(false);
+    setProgress(100);
+
+    if (error) {
+      setError(error.message);
+      toast.error(`❌ Payment failed: ${error.message}`, { autoClose: 5000 });
+    } else {
+      setSuccess(true);
+      setShowConfetti(true); // Start confetti
+      toast.success("🎉 Payment successful!", { autoClose: 5000 });
+
+      // Stop confetti after 10 seconds
+      setTimeout(() => {
+        setShowConfetti(false);
+      }, 10000);
+    }
+  } catch (err) {
+    setError("Something went wrong.");
+    toast.error("❌ Payment failed. Please try again.", { autoClose: 5000 });
+    console.error("Payment error:", err);
+  }
+};
+
 
   return (
-    <Container className="d-flex justify-content-center mt-4">
-      <Card style={{ width: "30rem", padding: "20px" }}>
+    <Container className="payment-container">
+      {showConfetti && <Confetti />}
+
+
+      <Card className="payment-card">
         <Card.Body>
-          <Card.Title className="text-center">
-            💳 Step 3: Payment Details
-          </Card.Title>
+          <Card.Title className="text-center payment-title">💳 Secure Premium Payment</Card.Title>
 
           <Form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <Row className="mb-3">
-              <Col xs={12}>
-                <Form.Group controlId="firstName">
-                  <Form.Label>First Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    {...register("firstName", { required: "First name is required" })}
-                    isInvalid={!!errors.firstName}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.firstName?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-            </Row>
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-bold">Card Details</Form.Label>
+              <div className="p-3 border rounded card-input">
+                <CardElement className="p-2" />
+              </div>
+            </Form.Group>
 
-            <Row className="mb-3">
-              <Col xs={12}>
-                <Form.Group controlId="lastName">
-                  <Form.Label>Last Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    {...register("lastName", { required: "Last name is required" })}
-                    isInvalid={!!errors.lastName}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.lastName?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-            </Row>
+            {error && <Alert variant="danger" className="text-center">{error}</Alert>}
+            {success && <Alert variant="success" className="text-center fw-bold">✅ Payment successful!</Alert>}
 
-            <Row className="mb-3">
-              <Col xs={12}>
-                <Form.Group controlId="cardNumber">
-                  <Form.Label>Card Number</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="0000 0000 0000 0000"
-                    {...register("cardNumber", {
-                      required: "Card number is required",
-                      pattern: { value: /^\d{16}$/, message: "Enter a valid 16-digit card number" },
-                    })}
-                    isInvalid={!!errors.cardNumber}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.cardNumber?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-            </Row>
-
-            <Row className="mb-3">
-              <Col xs={6}>
-                <Form.Group controlId="expiryDate">
-                  <Form.Label>Expiry Date (MM/YY)</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="MM/YY"
-                    {...register("expiryDate", {
-                      required: "Expiry date is required",
-                      pattern: { value: /^(0[1-9]|1[0-2])\/\d{2}$/, message: "Enter a valid expiry date (MM/YY)" },
-                    })}
-                    isInvalid={!!errors.expiryDate}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.expiryDate?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-
-              <Col xs={6}>
-                <Form.Group controlId="cvv">
-                  <Form.Label>Security Code (CVV)</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="000"
-                    {...register("cvv", {
-                      required: "Security code is required",
-                      pattern: { value: /^\d{3}$/, message: "Enter a valid 3-digit CVV" },
-                    })}
-                    isInvalid={!!errors.cvv}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.cvv?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-            </Row>
+            {loading && <ProgressBar now={progress} animated striped variant="success" className="mb-3" />}
 
             <div className="text-center">
-              <Button type="submit" variant="primary">
-                Pay Now
+              <Button type="submit" variant="dark" disabled={!stripe || loading} className="pay-button">
+                {loading ? <Spinner animation="border" size="sm" /> : "💎 Pay Securely"}
               </Button>
             </div>
           </Form>
         </Card.Body>
       </Card>
     </Container>
+  );
+};
+
+const Payment = () => {
+  const [clientSecret, setClientSecret] = useState("");
+  const clientSecretRef = useRef("");
+
+  useEffect(() => {
+    fetch("http://localhost:3001/api/create-payment-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: 100000 }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.clientSecret) {
+          if (clientSecretRef.current !== data.clientSecret) {
+            clientSecretRef.current = data.clientSecret;
+            setClientSecret(data.clientSecret);
+          }
+        } else {
+          toast.error("❌ Failed to get client secret!", { autoClose: 5000 });
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching clientSecret:", err);
+        toast.error("❌ Error fetching payment details!", { autoClose: 5000 });
+      });
+  }, []);
+
+  if (!clientSecret) {
+    return (
+      <Container className="loading-container">
+        <Spinner animation="border" variant="primary" />
+      </Container>
+    );
+  }
+
+  return (
+    <Elements stripe={stripePromise} options={{ clientSecret }}>
+      <CheckoutForm clientSecret={clientSecret} />
+    </Elements>
   );
 };
 

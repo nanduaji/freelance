@@ -1,0 +1,54 @@
+.payment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e1e2f, #3a3a60);
+    color: white;
+  }
+  
+  .payment-card {
+    width: 35rem;
+    border-radius: 15px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+  
+  .payment-title {
+    font-weight: bold;
+    font-size: 1.8rem;
+    color: #ffdf00;
+  }
+  
+  .card-input {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    color: white;
+  }
+  
+  .pay-button {
+    background: linear-gradient(135deg, #ffcc00, #ff6600);
+    color: black;
+    font-weight: bold;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .pay-button:hover {
+    background: linear-gradient(135deg, #ff6600, #ffcc00);
+    transform: scale(1.05);
+  }
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  

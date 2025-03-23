@@ -10,7 +10,7 @@ function Home() {
     const navigate = useNavigate();
 
     const handleBookNow = () => {
-        navigate("/payment");
+        navigate("/roombooking");
     };
     const [mapSize, setMapSize] = useState({
         width: "90%",
