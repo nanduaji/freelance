@@ -88,7 +88,7 @@ function Home() {
                             </b>
                         </p>
 
-                        <Button className={styles.custombutton} onClick={handleBookNow}><b>Book Your Stay</b></Button>
+                        <Button className={styles.custombutton} ><b>Book Your Stay</b></Button>
 
                         <Button className={`${styles.oppositebutton} mt-5`}>
                             <FaBed className="me-2" /> <b>Explore Our Rooms</b>
@@ -124,7 +124,7 @@ function Home() {
                                             <p className="card-text">
                                                 <h3 className="text-muted"> $ 50</h3>
                                             </p>
-                                            <Button className={`${styles.oppositebutton} mt-2`}>
+                                            <Button className={`${styles.oppositebutton} mt-2`} onClick={handleBookNow}>
                                                 <FaCalendarCheck className="me-2" /> <b>Book Now</b>
                                             </Button>
                                         </div>
