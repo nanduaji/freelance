@@ -78,7 +78,12 @@ const RoomDetailsCard = () => {
 
           <div className="d-flex justify-content-center align-items-center mt-3">
             <Badge pill bg="success" className="fs-5 px-3 py-2">
-              ${room?.price || "100"}
+              <span>
+                {room?.price
+                  ? new Intl.NumberFormat("en-AE", { style: "currency", currency: "AED" }).format(room.price)
+                  : "د.إ 100"}
+              </span>
+
             </Badge>
           </div>
         </Card.Body>

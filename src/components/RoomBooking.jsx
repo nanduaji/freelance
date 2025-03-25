@@ -98,11 +98,14 @@ const RoomBooking = () => {
                             key={room.name}
                             className={`mb-3 shadow-sm ${styles['room-card']}`}
                             onClick={() => handleSelectRoom(room)}
-                            style={{cursor:'pointer'}}
+                            style={{ cursor: 'pointer' }}
                         >
                             <Card.Img variant="top" src={room.image} alt={room.name} />
                             <Card.Body>
-                                <Card.Title>{room.name} - ${room.price}</Card.Title>
+                                <Card.Title>
+                                    {room.name} - {new Intl.NumberFormat("en-AE", { style: "currency", currency: "AED" }).format(room.price)}
+                                </Card.Title>
+
                                 <Card.Text>{room.description}</Card.Text>
                                 <ul>
                                     {room.amenities.map((amenity, index) => (
