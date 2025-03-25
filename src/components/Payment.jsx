@@ -96,6 +96,33 @@ const CheckoutForm = ({ clientSecret }) => {
   const [progress, setProgress] = useState(0);
   const [success, setSuccess] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [paymentRequestButton, setPaymentRequestButton] = useState(null);
+
+  // Create a PaymentRequest for Apple Pay
+  useEffect(() => {
+    if (!stripe) return;
+
+    const paymentRequest = stripe.paymentRequest({
+      country: "US", // Your country
+      currency: "usd",
+      total: {
+        label: "Room Booking", // Label for the payment
+        amount: localStorage.getItem("room")?.price || 100, // Payment amount
+      },
+      requestPayerName: true,
+      requestPayerEmail: true,
+    });
+
+    paymentRequest.canMakePayment().then((result) => {
+      if (result?.applePay) {
+        console.log("✅ Apple Pay is supported in this browser.");
+        setPaymentRequestButton(paymentRequest);
+      }
+      else {
+        console.log("❌ Apple Pay is NOT supported in this browser.");
+      }
+    });
+  }, [stripe]);
 
   const onSubmit = async () => {
     if (!stripe || !elements || !clientSecret) return;
@@ -133,10 +160,33 @@ const CheckoutForm = ({ clientSecret }) => {
     }
   };
 
+  const onApplePayClick = async () => {
+    if (!paymentRequestButton) return;
+    setLoading(true);
+    setProgress(30);
+
+    const { paymentIntent, error } = await stripe.confirmPaymentRequest(paymentRequestButton);
+    setLoading(false);
+    setProgress(100);
+
+    if (error) {
+      setError(error.message);
+      toast.error(`❌ Payment failed: ${error.message}`, { autoClose: 5000 });
+    } else {
+      setSuccess(true);
+      setShowConfetti(true);
+      toast.success("🎉 Payment successful!", { autoClose: 5000 });
+
+      setTimeout(() => {
+        setShowConfetti(false);
+      }, 10000);
+    }
+  };
+
   return (
     <Container className="payment-container">
       {showConfetti && <Confetti />}
-      <RoomDetailsCard /> {/* Include the room details here */}
+      <RoomDetailsCard />
       <Card className="payment-card glassmorphism-card">
         <Card.Body>
           <Card.Title className="text-center payment-title">💳 Secure Premium Payment</Card.Title>
@@ -154,6 +204,13 @@ const CheckoutForm = ({ clientSecret }) => {
             {loading && <ProgressBar now={progress} animated striped variant="success" className="mb-3" />}
 
             <div className="text-center">
+              {paymentRequestButton && (
+                <PaymentRequestButtonElement
+                  paymentRequest={paymentRequestButton}
+                  className="payment-request-button"
+                  onClick={onApplePayClick}
+                />
+              )}
               <Button type="submit" variant="dark" disabled={!stripe || loading} className="pay-button">
                 {loading ? <Spinner animation="border" size="sm" /> : "💎 Pay Securely"}
               </Button>
@@ -164,6 +221,7 @@ const CheckoutForm = ({ clientSecret }) => {
     </Container>
   );
 };
+
 
 const Payment = () => {
   const [clientSecret, setClientSecret] = useState("");
