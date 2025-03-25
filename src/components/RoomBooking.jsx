@@ -19,7 +19,7 @@ const roomTypes = [
             "Mini-bar",
             "24/7 room service"
         ],
-        price: "100"
+        price: "2"
     },
     {
         name: "Presidential Suite",
@@ -32,7 +32,7 @@ const roomTypes = [
             "Complimentary breakfast",
             "High-speed internet"
         ],
-        price: "100"
+        price: "3"
     },
     {
         name: "Luxury Villa",
@@ -45,7 +45,7 @@ const roomTypes = [
             "Outdoor seating area",
             "Smart home automation"
         ],
-        price: "1"
+        price: "4"
     },
 ];
 
