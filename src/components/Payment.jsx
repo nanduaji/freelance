@@ -103,6 +103,33 @@ const CheckoutForm = ({ clientSecret }) => {
   const [progress, setProgress] = useState(0);
   const [success, setSuccess] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [paymentRequestButton, setPaymentRequestButton] = useState(null);
+
+  // Create a PaymentRequest for Apple Pay
+  useEffect(() => {
+    if (!stripe) return;
+
+    const paymentRequest = stripe.paymentRequest({
+      country: "AE", // Your country
+      currency: "aed",
+      total: {
+        label: "Room Booking", // Label for the payment
+        amount: localStorage.getItem("room")?.price || 100, // Payment amount
+      },
+      requestPayerName: true,
+      requestPayerEmail: true,
+    });
+
+    paymentRequest.canMakePayment().then((result) => {
+      if (result?.applePay) {
+        console.log("✅ Apple Pay is supported in this browser.");
+        setPaymentRequestButton(paymentRequest);
+      }
+      else {
+        console.log("❌ Apple Pay is NOT supported in this browser.");
+      }
+    });
+  }, [stripe]);
 
   const onSubmit = async () => {
     if (!stripe || !elements || !clientSecret) return;
