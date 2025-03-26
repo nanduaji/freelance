@@ -108,8 +108,8 @@ const CheckoutForm = ({ clientSecret }) => {
     if (!stripe) return;
 
     const paymentRequest = stripe.paymentRequest({
-      country: "US", // Your country
-      currency: "usd",
+      country: "AE", // Your country
+      currency: "aed",
       total: {
         label: "Room Booking", // Label for the payment
         amount: localStorage.getItem("room")?.price || 100, // Payment amount
