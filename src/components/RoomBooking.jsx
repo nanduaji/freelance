@@ -19,7 +19,7 @@ const roomTypes = [
             "Mini-bar",
             "24/7 room service"
         ],
-        price: "100"
+        price: "2"
     },
     {
         name: "Presidential Suite",
@@ -32,7 +32,7 @@ const roomTypes = [
             "Complimentary breakfast",
             "High-speed internet"
         ],
-        price: "150"
+        price: "3"
     },
     {
         name: "Luxury Villa",
@@ -45,7 +45,7 @@ const roomTypes = [
             "Outdoor seating area",
             "Smart home automation"
         ],
-        price: "200"
+        price: "4"
     },
 ];
 
@@ -98,11 +98,14 @@ const RoomBooking = () => {
                             key={room.name}
                             className={`mb-3 shadow-sm ${styles['room-card']}`}
                             onClick={() => handleSelectRoom(room)}
-                            style={{cursor:'pointer'}}
+                            style={{ cursor: 'pointer' }}
                         >
                             <Card.Img variant="top" src={room.image} alt={room.name} />
                             <Card.Body>
-                                <Card.Title>{room.name} - ${room.price}</Card.Title>
+                                <Card.Title>
+                                    {room.name} - {new Intl.NumberFormat("en-AE", { style: "currency", currency: "AED" }).format(room.price)}
+                                </Card.Title>
+
                                 <Card.Text>{room.description}</Card.Text>
                                 <ul>
                                     {room.amenities.map((amenity, index) => (
