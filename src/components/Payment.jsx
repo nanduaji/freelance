@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Modal, Button, Card, Container, Spinner, ProgressBar, Alert, Row, Col, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import { Elements, useStripe, useElements, CardElement, PaymentElement } from "@stripe/react-stripe-js";
 import { toast } from "react-toastify";
 import Confetti from "react-confetti";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,7 +25,9 @@ const paymentOptions = [
   { id: "paypal", name: "PayPal", icon: "🅿️" },
   { id: "crypto", name: "Crypto", icon: "₿" },
   { id: "bank_transfer", name: "Bank", icon: "🏦" },
+  { id: "stripe_link", name: "Stripe Link", icon: "🔗" }, 
 ];
+
 
 const PaymentOptionsModal = ({ onSelect }) => {
   return (
@@ -101,33 +103,6 @@ const CheckoutForm = ({ clientSecret }) => {
   const [progress, setProgress] = useState(0);
   const [success, setSuccess] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [paymentRequestButton, setPaymentRequestButton] = useState(null);
-
-  // Create a PaymentRequest for Apple Pay
-  useEffect(() => {
-    if (!stripe) return;
-
-    const paymentRequest = stripe.paymentRequest({
-      country: "US", // Your country
-      currency: "usd",
-      total: {
-        label: "Room Booking", // Label for the payment
-        amount: localStorage.getItem("room")?.price || 100, // Payment amount
-      },
-      requestPayerName: true,
-      requestPayerEmail: true,
-    });
-
-    paymentRequest.canMakePayment().then((result) => {
-      if (result?.applePay) {
-        console.log("✅ Apple Pay is supported in this browser.");
-        setPaymentRequestButton(paymentRequest);
-      }
-      else {
-        console.log("❌ Apple Pay is NOT supported in this browser.");
-      }
-    });
-  }, [stripe]);
 
   const onSubmit = async () => {
     if (!stripe || !elements || !clientSecret) return;
@@ -136,11 +111,12 @@ const CheckoutForm = ({ clientSecret }) => {
     setProgress(30);
 
     try {
-      const cardElement = elements.getElement(CardElement);
-      setProgress(60);
-
-      const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: { card: cardElement },
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        // confirmParams: {
+        //   // return_url: window.location.origin, 
+        // },
+        redirect: "if_required",
       });
 
       setLoading(false);
@@ -165,41 +141,17 @@ const CheckoutForm = ({ clientSecret }) => {
     }
   };
 
-  const onApplePayClick = async () => {
-    if (!paymentRequestButton) return;
-    setLoading(true);
-    setProgress(30);
-
-    const { paymentIntent, error } = await stripe.confirmPaymentRequest(paymentRequestButton);
-    setLoading(false);
-    setProgress(100);
-
-    if (error) {
-      setError(error.message);
-      toast.error(`❌ Payment failed: ${error.message}`, { autoClose: 5000 });
-    } else {
-      setSuccess(true);
-      setShowConfetti(true);
-      toast.success("🎉 Payment successful!", { autoClose: 5000 });
-
-      setTimeout(() => {
-        setShowConfetti(false);
-      }, 10000);
-    }
-  };
-
   return (
     <Container className="payment-container">
       {showConfetti && <Confetti />}
-      <RoomDetailsCard />
       <Card className="payment-card glassmorphism-card">
         <Card.Body>
           <Card.Title className="text-center payment-title">💳 Secure Premium Payment</Card.Title>
           <Form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Form.Group className="mb-3">
-              <Form.Label className="fw-bold">Card Details</Form.Label>
+              <Form.Label className="fw-bold">Payment Details</Form.Label>
               <div className="p-3 border rounded card-input">
-                <CardElement className="p-2" />
+                <PaymentElement /> {/* Stripe Link + Cards + Other Payment Methods */}
               </div>
             </Form.Group>
 
@@ -209,13 +161,6 @@ const CheckoutForm = ({ clientSecret }) => {
             {loading && <ProgressBar now={progress} animated striped variant="success" className="mb-3" />}
 
             <div className="text-center">
-              {paymentRequestButton && (
-                <PaymentRequestButtonElement
-                  paymentRequest={paymentRequestButton}
-                  className="payment-request-button"
-                  onClick={onApplePayClick}
-                />
-              )}
               <Button type="submit" variant="dark" disabled={!stripe || loading} className="pay-button">
                 {loading ? <Spinner animation="border" size="sm" /> : "💎 Pay Securely"}
               </Button>
