@@ -301,7 +301,7 @@ const Payment = () => {
   
     console.log(`Total Amount for ${numDays} days: AED ${totalAmount}`);
   
-    fetch("https://freelance-backend-tdv5.onrender.com/api/create-payment-intent", {
+    fetch("https://freelance-backend-tdv5.onrender.co/api/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount: totalAmount }),
