@@ -240,7 +240,11 @@ const CheckoutForm = ({ clientSecret }) => {
                 <PaymentElement /> {/* Stripe Link + Cards + Other Payment Methods */}
               </div>
             </Form.Group>
-
+            {paymentRequestButton && (
+              <div className="apple-pay-container mt-3">
+                <PaymentRequestButtonElement options={{ paymentRequest: paymentRequestButton }} />
+              </div>
+            )}
             {error && <Alert variant="danger" className="text-center fade-in">{error}</Alert>}
             {success && <Alert variant="success" className="text-center fw-bold fade-in">✅ Payment successful!</Alert>}
 
