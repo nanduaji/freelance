@@ -39,7 +39,7 @@ const roomTypes = [
       "Complimentary breakfast",
       "High-speed internet",
     ],
-    price: "3",
+    price: "549",
   },
   {
     name: "Luxury Villa",
@@ -52,7 +52,7 @@ const roomTypes = [
       "Outdoor seating area",
       "Smart home automation",
     ],
-    price: "4",
+    price: "899",
   },
 ];
 
