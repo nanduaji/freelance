@@ -26,7 +26,7 @@ const roomTypes = [
       "Mini-bar",
       "24/7 room service",
     ],
-    price: "2",
+    price: "319",
   },
   {
     name: "Presidential Suite",
