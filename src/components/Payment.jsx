@@ -69,7 +69,7 @@ const RoomDetailsCard = () => {
   const roomName = localStorage.getItem("roomName") || "Luxury Suite";
   const roomDescription = localStorage.getItem("roomDescription") || "A premium room with breathtaking views.";
   const roomImage = roomDetails?.roomDetails?.image || "https://source.unsplash.com/800x400/?luxury,hotel"; // Default image
-  const guestCount = parseInt(roomDetails?.guests, 10) || 1; // Default 1 guest
+  // const guestCount = parseInt(roomDetails?.guests, 10) || 1; // Default 1 guest
   const roomQuantity = parseInt(roomDetails?.roomQuantity, 10) || 1; // Default 1 room
   const pricePerNight = parseFloat(roomDetails?.roomDetails?.price) || 100; // Default price
 
@@ -82,7 +82,7 @@ const RoomDetailsCard = () => {
   const daysBooked = timeDiff > 0 ? Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) : 1;
 
   // Calculate total price
-  const totalPrice = pricePerNight * daysBooked * guestCount * roomQuantity;
+  const totalPrice = pricePerNight * daysBooked * roomQuantity;
 
   return (
     <Container className="d-flex justify-content-center mt-5 mb-5">
@@ -94,7 +94,7 @@ const RoomDetailsCard = () => {
           <p className="text-muted">{roomDescription}</p>
 
           <div className="d-flex justify-content-between align-items-center mt-3">
-            <Badge pill bg="info" className="fs-6 px-3 py-2">👤 Guests: {guestCount}</Badge>
+            {/* <Badge pill bg="info" className="fs-6 px-3 py-2">👤 Guests: {guestCount}</Badge> */}
             <Badge pill bg="primary" className="fs-6 px-3 py-2">🏠 Rooms: {roomQuantity}</Badge>
           </div>
 
@@ -138,7 +138,7 @@ const CheckoutForm = ({ clientSecret }) => {
       !roomDetails[0].roomDetails.price ||
       !roomDetails[0].checkinDate ||
       !roomDetails[0].checkoutDate ||
-      !roomDetails[0].guests ||
+      // !roomDetails[0].guests ||
       !roomDetails[0].roomQuantity
     ) {
       toast.error("❌ Missing booking details!", { autoClose: 5000 });
@@ -148,22 +148,22 @@ const CheckoutForm = ({ clientSecret }) => {
     // Convert check-in and check-out dates to JavaScript Date objects
     const checkinDate = new Date(roomDetails[0].checkinDate);
     const checkoutDate = new Date(roomDetails[0].checkoutDate);
-    const guestCount = parseInt(roomDetails[0].guests, 10) || 1; // Default 1 guest if missing
+    // const guestCount = parseInt(roomDetails[0].guests, 10) || 1; // Default 1 guest if missing
     const roomQuantity = parseInt(roomDetails[0].roomQuantity, 10) || 1; // Default 1 room if missing
   
     console.log("Check-in:", checkinDate, "Check-out:", checkoutDate);
-    console.log("Guests:", guestCount, "Rooms:", roomQuantity);
+    // console.log("Guests:", guestCount, "Rooms:", roomQuantity);
   
     // Calculate the number of days (ensure at least 1 day is charged)
     const timeDiff = checkoutDate - checkinDate;
     const daysBooked = timeDiff > 0 ? Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) : 1;
   
     // Calculate total price
-    const amount = roomDetails[0].roomDetails.price * daysBooked * guestCount * roomQuantity;
+    const amount = roomDetails[0].roomDetails.price * daysBooked  * roomQuantity;
   
-    console.log(
-      `Check-in: ${checkinDate}, Check-out: ${checkoutDate}, Days: ${daysBooked}, Guests: ${guestCount}, Rooms: ${roomQuantity}, Amount: ${amount}`
-    );
+    // console.log(
+    //   `Check-in: ${checkinDate}, Check-out: ${checkoutDate}, Days: ${daysBooked}, Guests: ${guestCount}, Rooms: ${roomQuantity}, Amount: ${amount}`
+    // );
   
     // Create Apple Pay payment request
     const paymentRequest = stripe.paymentRequest({
@@ -279,7 +279,7 @@ const Payment = () => {
       !roomDetails[0].roomDetails.price ||
       !roomDetails[0].checkinDate ||
       !roomDetails[0].checkoutDate ||
-      !roomDetails[0].guests ||
+      // !roomDetails[0].guests ||
       !roomDetails[0].roomQuantity
     ) {
       toast.error("❌ Missing booking details!", { autoClose: 5000 });
@@ -289,11 +289,11 @@ const Payment = () => {
     // Convert dates to JavaScript Date objects
     const checkinDate = new Date(roomDetails[0].checkinDate);
     const checkoutDate = new Date(roomDetails[0].checkoutDate);
-    const guestCount = parseInt(roomDetails[0].guests, 10) || 1; // Default 1 guest if missing
+    // const guestCount = parseInt(roomDetails[0].guests, 10) || 1; // Default 1 guest if missing
     const roomQuantity = parseInt(roomDetails[0].roomQuantity, 10) || 1; // Default 1 room if missing
   
     console.log("Check-in:", checkinDate, "Check-out:", checkoutDate);
-    console.log("Guests:", guestCount, "Rooms:", roomQuantity);
+    // console.log("Guests:", guestCount, "Rooms:", roomQuantity);
   
     // Calculate the number of days
     const timeDiff = checkoutDate - checkinDate;
@@ -301,7 +301,7 @@ const Payment = () => {
   
     // Calculate total amount
     const roomPrice = roomDetails[0].roomDetails.price;
-    const totalAmount = numDays * roomPrice * guestCount * roomQuantity;
+    const totalAmount = numDays * roomPrice  * roomQuantity;
   
     console.log(`Total Amount for ${numDays} days: AED ${totalAmount}`);
   
