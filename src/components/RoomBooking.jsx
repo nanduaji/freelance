@@ -87,7 +87,7 @@ const RoomBooking = () => {
     } else {
       setFormData((prevData) => ({
         ...prevData,
-        [name]: name === "roomQuantity" ? Math.min(5, Math.max(1, value)) : value,
+        [name]: name === "roomQuantity" ? Math.max(1, value) : value ,
       }));
     }
   };
