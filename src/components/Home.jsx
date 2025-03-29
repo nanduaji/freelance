@@ -77,15 +77,16 @@ function Home() {
                         <h1 className={`${styles.title} mt-3`}>Experience Luxury at Great Wall Hotel </h1>
                         <p className="lead limited-text" style={{
                             fontFamily: "'Cormorant Garamond', serif",
-                            fontSize: "22px",
-                            fontWeight: "400",
+                            fontSize: "24px",
+                            fontWeight: "700",
                             color: "#2c2c2c",
                             lineHeight: "1.7",
                             letterSpacing: "0.5px"
                         }}>
-                            <b> With 870 exquisite rooms ranging from 600 AED to 4000 AED per day, City Grand Hotel
-                                offers unparalleled luxury and service, ideal for every traveler.
-                            </b>
+                            <p style={{fontSize: "20px", fontWeight: "bold"}} > "Unparalleled Comfort at an Unbeatable Price" – Experience world-class hospitality 
+                                in our 200 exquisite rooms, designed for both leisure and business travelers, 
+                                starting at just 320 AED per night.
+                            </p>
                         </p>
 
                         <Button className={styles.custombutton} onClick={handleBookNow}><b>Book Your Stay</b></Button>
@@ -103,8 +104,8 @@ function Home() {
                             <FaGift className="me-2" /> <b>Special Offers</b>
                         </Button>
 
-                        <div className="mt-5" style={{ backgroundColor: "#e2edec", padding: "20px", borderRadius: "10px" }}>
-                            <h1 className={styles.title}>Unmatched Services to Elevate Your Stay</h1>
+                        <div className="mt-5" style={{ fontFamily: "'Playfair Display', serif", backgroundColor: "#e2edec", padding: "20px", borderRadius: "10px" }}>
+                            <h3 className={styles.title}>Experience More Than Just a Stay</h3>
                             {/* Cards Section */}
                             <div className="card p-3">
                                 <div className="row g-0 align-items-center">
@@ -121,12 +122,12 @@ function Home() {
                                                 Enjoy a range of room options designed for comfort and elegance, catering to all budgets and preferences.
 
                                             </p>
-                                            <p className="card-text">
+                                          {/*<p className="card-text">
                                                 <h3 className="text-muted"> $ 50</h3>
                                             </p>
                                             <Button className={`${styles.oppositebutton} mt-2`} >
                                                 <FaCalendarCheck className="me-2" /> <b>Book Now</b>
-                                            </Button>
+                                            </Button>*/}
                                         </div>
                                     </div>
                                 </div>
@@ -146,12 +147,12 @@ function Home() {
                                                 Savor gourmet meals prepared by top chefs in our world-class restaurant, offering international cuisine.
 
                                             </p>
-                                            <p className="card-text">
+                                            {/*<p className="card-text">
                                                 <h3 className="text-muted"> $ 50</h3>
                                             </p>
                                             <Button className={`${styles.oppositebutton} mt-2`}>
                                                 <FaCalendarCheck className="me-2" /> <b>Book Now</b>
-                                            </Button>
+                                            </Button>*/}
                                         </div>
                                     </div>
                                 </div>
@@ -171,12 +172,12 @@ function Home() {
                                             <p className="card-text">
                                                 Indulge in relaxing treatments at our upscale spa, designed to refresh and rejuvenate your body and mind.
                                             </p>
-                                            <p className="card-text">
+                                            {/*<p className="card-text">
                                                 <h3 className="text-muted"> $ 50</h3>
                                             </p>
                                             <Button className={`${styles.oppositebutton} mt-2`}>
                                                 <FaCalendarCheck className="me-2" /> <b>Book Now</b>
-                                            </Button>
+                                            </Button>*/}
                                         </div>
                                     </div>
                                 </div>
@@ -196,12 +197,12 @@ function Home() {
                                             <p className="card-text">
                                                 Host your events in our fully equipped conference rooms, suitable for business meetings and gatherings.
                                             </p>
-                                            <p className="card-text">
+                                            {/*<p className="card-text">
                                                 <h3 className="text-muted"> $ 50</h3>
                                             </p>
                                             <Button className={`${styles.oppositebutton} mt-2`}>
                                                 <FaCalendarCheck className="me-2" /> <b>Book Now</b>
-                                            </Button>
+                                            </Button>*/}
                                         </div>
                                     </div>
                                 </div>
@@ -222,12 +223,12 @@ function Home() {
                                                 Relax and unwind at our stunning outdoor pool and recreation area, perfect for leisure and family fun.
 
                                             </p>
-                                            <p className="card-text">
+                                            {/*<p className="card-text">
                                                 <h3 className="text-muted"> $ 50</h3>
                                             </p>
                                             <Button className={`${styles.oppositebutton} mt-2`}>
                                                 <FaCalendarCheck className="me-2" /> <b>Book Now</b>
-                                            </Button>
+                                            </Button>*/}
                                         </div>
                                     </div>
                                 </div>
@@ -249,7 +250,7 @@ function Home() {
                                 lineHeight: "1.7",
                                 letterSpacing: "0.5px"
                             }}>
-                                <b> Founded with the vision to provide a world-class hospitality experience, City Grand Hotel stands out for its luxurious accommodations and exceptional services. Our commitment to excellence ensures that every guest receives personalized attention, making their stay memorable.
+                                <b> "City Grand Hotel is a sanctuary of timeless elegance, where opulent interiors, world-class amenities, and impeccable service come together to create an experience of unparalleled sophistication and comfort"
                                 </b>
                             </p>
                             <Button className={styles.custombutton} ><b>Discover More</b></Button>
@@ -291,14 +292,14 @@ function Home() {
                                 Book Your Luxurious Escape <br /> Today
                             </h1>
                             <p className="large p-2 mb-2" style={{ color: 'white' }}>Don't miss out on a chance to indulge in unparalleled luxury and comfort. Reserve your room now to experience all that City Grand Hotel has to offer.</p>
-                            <Button
+                            {/*<Button
                                 className={`${styles.oppositebutton} mt-5 mb-5`}
                                 style={{
                                     width: '50%'
                                 }}
                             >
                                 <FaCalendarCheck /> <span>Reserve Now</span>
-                            </Button>
+                            </Button>*/}
 
                         </div>
                         <div
@@ -425,10 +426,15 @@ function Home() {
                                 <h1 className={`${styles.title} mt-3 fw-bold mb-4`}>Reach Out To Us Here</h1>
                                 <div className="row justify-content-center">
                                     {[
-                                        { icon: <FaPhone size={30} />, title: "Phone", value: "+1 234 567 890" },
-                                        { icon: <FaEnvelope size={30} />, title: "Gmail", value: "contact@example.com" },
-                                        { icon: <FaMapMarkerAlt size={30} />, title: "Location", value: "123 Street, City, Country" },
-                                        { icon: <FaClock size={30} />, title: "Timing", value: "Mon-Fri: 9AM - 6PM" },
+                                        { icon: <FaPhone size={30} />, title: "Phone", value: "+971 568899009" },
+                                        { icon: <FaEnvelope size={30} />, title: "Gmail", value: "moh.ibr.gom@gmail.com" },
+                                        { icon: <FaMapMarkerAlt size={30} />, title: "Location", value: (
+                                            <>
+                                              Dubai International City, Dubai <br />
+                                              United Arab Emirates
+                                            </>
+                                          ) },
+                                        { icon: <FaClock size={30} />, title: "Timing", value: "24/7 Availability" },
                                     ].map((item, index) => (
                                         <div key={index} className="col-md-5 col-12 d-flex flex-column align-items-center mb-4">
                                             <div className="p-3 bg-white rounded-circle shadow d-flex align-items-center justify-content-center" style={{ width: "60px", height: "60px" }}>
@@ -449,7 +455,7 @@ function Home() {
                                             <iframe
                                                 title="Google Map"
                                                 className="map"
-                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345093745!2d144.95373631590414!3d-37.817209979751675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0x5045675218ce6e0!2sMelbourne%20VIC%2C%20Australia!5e0!3m2!1sen!2sus!4v1614842851053!5m2!1sen!2sus"
+                                                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d4288.7353782516275!2d55.37557013826775!3d25.324952638082056!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f614eb88deb71%3A0x1639bd9727e18e15!2sDubai%20International%20City%20-%20Dubai%20-%20United%20Arab%20Emirates!5e0!3m2!1sen!2sin!4v1743233455328!5m2!1sen!2sin"
                                                 style={{
                                                     width: mapSize.width,
                                                     height: mapSize.height,

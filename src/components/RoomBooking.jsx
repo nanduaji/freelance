@@ -26,7 +26,8 @@ const roomTypes = [
       "Mini-bar",
       "24/7 room service",
     ],
-    price: "2",
+    price: "319",
+    warning: "Maximum 4 adults permitted. Extra people will be charged 25% of the room charge."
   },
   {
     name: "Presidential Suite",
@@ -39,7 +40,8 @@ const roomTypes = [
       "Complimentary breakfast",
       "High-speed internet",
     ],
-    price: "3",
+    price: "549",
+    warning: "Maximum 4 adults permitted. Extra people will be charged 25% of the room charge."
   },
   {
     name: "Luxury Villa",
@@ -52,9 +54,11 @@ const roomTypes = [
       "Outdoor seating area",
       "Smart home automation",
     ],
-    price: "4",
+    price: "899",
+    warning: "Maximum 4 adults permitted. Extra people will be charged 25% of the room charge."
   },
 ];
+
 
 const RoomBooking = () => {
   const navigate = useNavigate();
@@ -62,7 +66,7 @@ const RoomBooking = () => {
     name: "",
     email: "",
     phone: "",
-    guests: "",
+    // guests: "",
     checkinDate: "",
     checkoutDate: "",
     roomType: roomTypes[0].name,
@@ -94,7 +98,7 @@ const RoomBooking = () => {
       !formData.name ||
       !formData.email ||
       !formData.phone ||
-      !formData.guests ||
+      // !formData.guests ||
       !formData.checkinDate ||
       !formData.checkoutDate ||
       !formData.roomQuantity
@@ -133,10 +137,15 @@ const RoomBooking = () => {
                     <li key={index}>{amenity}</li>
                   ))}
                 </ul>
+                {/* Warning Message */}
+                <p className="text-danger mt-2">
+                  ⚠️ Max occupancy: 2 adults & 2 kids per room. <br></br>  Extra guests will be charged a 25% room rate surcharge.
+                </p>
               </Card.Body>
             </Card>
           ))}
         </Col>
+
 
         <Col md={6}>
           <div style={{ position: "sticky", top: "20px" }}>
@@ -172,17 +181,14 @@ const RoomBooking = () => {
                         <Form.Control type="tel" name="phone" value={formData.phone} onChange={handleChange} required />
                       </Form.Group>
                     </Col>
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>
-                          <FaUser /> Guests
-                        </Form.Label>
-                        <Form.Control type="number" name="guests" value={formData.guests} onChange={handleChange} required />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-
-                  <Row>
+                    {/* <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>
+                  <FaUser /> Guests
+                </Form.Label>
+                <Form.Control type="number" name="guests" value={formData.guests} onChange={handleChange} required />
+              </Form.Group>
+            </Col> */}
                     <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>
@@ -190,6 +196,11 @@ const RoomBooking = () => {
                         </Form.Label>
                         <Form.Control type="date" name="checkinDate" value={formData.checkinDate} onChange={handleChange} required />
                       </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>
                           <FaCalendarAlt /> Check-out Date
@@ -210,16 +221,21 @@ const RoomBooking = () => {
                           ))}
                         </Form.Select>
                       </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>
-                          <FaDoorOpen /> Room Quantity (Max 5)
+                          <FaDoorOpen /> Room Quantity 
                         </Form.Label>
                         <Form.Control
                           type="number"
                           name="roomQuantity"
                           value={formData.roomQuantity}
                           min="1"
-                          max="5"
+                          max="120"
                           onChange={handleChange}
                           required
                         />
@@ -235,6 +251,8 @@ const RoomBooking = () => {
             </Card>
           </div>
         </Col>
+
+
       </Row>
     </Container>
   );
