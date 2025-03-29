@@ -250,7 +250,7 @@ function Home() {
                                 lineHeight: "1.7",
                                 letterSpacing: "0.5px"
                             }}>
-                                <b> "City Grand Hotel is a sanctuary of timeless elegance, where opulent interiors, world-class amenities, and impeccable service come together to create an experience of unparalleled sophistication and comfort"
+                                <b> "Great Wall Hotel is a sanctuary of timeless elegance, where opulent interiors, world-class amenities, and impeccable service come together to create an experience of unparalleled sophistication and comfort"
                                 </b>
                             </p>
                             <Button className={styles.custombutton} ><b>Discover More</b></Button>
@@ -291,7 +291,7 @@ function Home() {
                             <h1 style={{ color: 'white', padding: '20px', wordWrap: 'break-word' }}>
                                 Book Your Luxurious Escape <br /> Today
                             </h1>
-                            <p className="large p-2 mb-2" style={{ color: 'white' }}>Don't miss out on a chance to indulge in unparalleled luxury and comfort. Reserve your room now to experience all that City Grand Hotel has to offer.</p>
+                            <p className="large p-2 mb-2" style={{ color: 'white' }}>Don't miss out on a chance to indulge in unparalleled luxury and comfort. Reserve your room now to experience all that Great Wall Hotel has to offer.</p>
                             {/*<Button
                                 className={`${styles.oppositebutton} mt-5 mb-5`}
                                 style={{

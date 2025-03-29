@@ -22,9 +22,9 @@ const paymentOptions = [
   { id: "card", name: "Card", icon: "💳" },
   { id: "apple_pay", name: "Apple Pay", icon: "🍏" },
   { id: "google_pay", name: "Google Pay", icon: "📱" },
-  { id: "paypal", name: "PayPal", icon: "🅿️" },
-  { id: "crypto", name: "Crypto", icon: "₿" },
-  { id: "bank_transfer", name: "Bank", icon: "🏦" },
+//  { id: "paypal", name: "PayPal", icon: "🅿️" },
+ // { id: "crypto", name: "Crypto", icon: "₿" },
+//  { id: "bank_transfer", name: "Bank", icon: "🏦" },
   { id: "stripe_link", name: "Stripe Link", icon: "🔗" }, 
 ];
 
