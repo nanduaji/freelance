@@ -427,7 +427,7 @@ function Home() {
                                 <div className="row justify-content-center">
                                     {[
                                         { icon: <FaPhone size={30} />, title: "Phone", value: "+971 568899009" },
-                                        { icon: <FaEnvelope size={30} />, title: "Gmail", value: "moh.ibr.gom@gmail.com" },
+                                        { icon: <FaEnvelope size={30} />, title: "Gmail", value: "info@thegreatwallhotel.com" },
                                         { icon: <FaMapMarkerAlt size={30} />, title: "Location", value: (
                                             <>
                                               Dubai International City, Dubai <br />
