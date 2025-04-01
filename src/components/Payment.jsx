@@ -22,10 +22,10 @@ const paymentOptions = [
   { id: "card", name: "Card", icon: "💳" },
   { id: "apple_pay", name: "Apple Pay", icon: "🍏" },
   { id: "google_pay", name: "Google Pay", icon: "📱" },
-//  { id: "paypal", name: "PayPal", icon: "🅿️" },
- // { id: "crypto", name: "Crypto", icon: "₿" },
-//  { id: "bank_transfer", name: "Bank", icon: "🏦" },
-  { id: "stripe_link", name: "Stripe Link", icon: "🔗" }, 
+  //  { id: "paypal", name: "PayPal", icon: "🅿️" },
+  // { id: "crypto", name: "Crypto", icon: "₿" },
+  //  { id: "bank_transfer", name: "Bank", icon: "🏦" },
+  { id: "stripe_link", name: "Stripe Link", icon: "🔗" },
 ];
 
 
@@ -65,7 +65,7 @@ const PaymentOptionsModal = ({ onSelect }) => {
 
 const RoomDetailsCard = () => {
   const roomDetails = JSON.parse(localStorage.getItem("bookings"))?.[0]; // Get first booking
-  console.log("roomDetails",roomDetails)
+  console.log("roomDetails", roomDetails)
   const roomName = localStorage.getItem("roomName") || "Luxury Suite";
   const roomDescription = localStorage.getItem("roomDescription") || "A premium room with breathtaking views.";
   const roomImage = roomDetails?.roomDetails?.image || "https://source.unsplash.com/800x400/?luxury,hotel"; // Default image
@@ -89,25 +89,26 @@ const RoomDetailsCard = () => {
       <Card className="room-details-card glassmorphism-card shadow-lg overflow-hidden" style={{ maxWidth: "500px", borderRadius: "15px" }}>
         <Card.Img variant="top" src={roomImage} alt="Room Image" className="room-image" />
 
-        <Card.Body className="text-center">
+        <Card.Body className="text-center p-4">
           <h3 className="fw-bold text-gold">{roomName}</h3>
-          <p className="text-muted">{roomDescription}</p>
+          <p className="text-muted mb-3">{roomDescription}</p>
 
-          <div className="d-flex justify-content-between align-items-center mt-3">
-            {/* <Badge pill bg="info" className="fs-6 px-3 py-2">👤 Guests: {guestCount}</Badge> */}
-            <Badge pill bg="primary" className="fs-6 px-3 py-2">🏠 Rooms: {roomQuantity}</Badge>
+          <div className="d-flex flex-wrap justify-content-center gap-2 mt-3">
+            <Badge pill bg="primary" className="fs-6 px-4 py-2 shadow-sm">
+              🏠 Rooms: {roomQuantity}
+            </Badge>
+            <Badge pill bg="warning" className="fs-6 px-4 py-2 shadow-sm">
+              📅 Nights: {daysBooked}
+            </Badge>
           </div>
 
-          <div className="d-flex justify-content-center align-items-center mt-3">
-            <Badge pill bg="warning" className="fs-6 px-3 py-2">📅 Nights: {daysBooked}</Badge>
-          </div>
-
-          <div className="d-flex justify-content-center align-items-center mt-3">
-            <Badge pill bg="success" className="fs-5 px-3 py-2">
+          <div className="mt-4">
+            <Badge pill bg="success" className="fs-5 px-4 py-2 shadow-lg">
               {new Intl.NumberFormat("en-AE", { style: "currency", currency: "AED" }).format(totalPrice)}
             </Badge>
           </div>
         </Card.Body>
+
       </Card>
     </Container>
   );
@@ -129,10 +130,10 @@ const CheckoutForm = ({ clientSecret }) => {
   // Create a PaymentRequest for Apple Pay
   useEffect(() => {
     if (!stripe) return;
-  
+
     const roomDetails = JSON.parse(localStorage.getItem("bookings"));
     console.log("Room Details:", roomDetails);
-  
+
     if (
       !roomDetails ||
       !roomDetails[0].roomDetails.price ||
@@ -144,27 +145,27 @@ const CheckoutForm = ({ clientSecret }) => {
       toast.error("❌ Missing booking details!", { autoClose: 5000 });
       return;
     }
-  
+
     // Convert check-in and check-out dates to JavaScript Date objects
     const checkinDate = new Date(roomDetails[0].checkinDate);
     const checkoutDate = new Date(roomDetails[0].checkoutDate);
     // const guestCount = parseInt(roomDetails[0].guests, 10) || 1; // Default 1 guest if missing
     const roomQuantity = parseInt(roomDetails[0].roomQuantity, 10) || 1; // Default 1 room if missing
-  
+
     console.log("Check-in:", checkinDate, "Check-out:", checkoutDate);
     // console.log("Guests:", guestCount, "Rooms:", roomQuantity);
-  
+
     // Calculate the number of days (ensure at least 1 day is charged)
     const timeDiff = checkoutDate - checkinDate;
     const daysBooked = timeDiff > 0 ? Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) : 1;
-  
+
     // Calculate total price
-    const amount = roomDetails[0].roomDetails.price * daysBooked  * roomQuantity;
-  
+    const amount = roomDetails[0].roomDetails.price * daysBooked * roomQuantity;
+
     // console.log(
     //   `Check-in: ${checkinDate}, Check-out: ${checkoutDate}, Days: ${daysBooked}, Guests: ${guestCount}, Rooms: ${roomQuantity}, Amount: ${amount}`
     // );
-  
+
     // Create Apple Pay payment request
     const paymentRequest = stripe.paymentRequest({
       country: "AE",
@@ -176,7 +177,7 @@ const CheckoutForm = ({ clientSecret }) => {
       requestPayerName: true,
       requestPayerEmail: true,
     });
-  
+
     paymentRequest.canMakePayment().then((result) => {
       if (result?.applePay) {
         console.log("✅ Apple Pay is supported.");
@@ -186,8 +187,26 @@ const CheckoutForm = ({ clientSecret }) => {
       }
     });
   }, [stripe]);
-  
 
+  const sendConfirmationEmail = async (email, bookingDetails, paymentIntentId) => {
+    try {
+      const response = await fetch("https://freelance-backend-1-51yh.onrender.com/send-confirmation-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, bookingDetails, paymentIntentId }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success("📧 Confirmation email sent successfully!", { autoClose: 5000 });
+      } else {
+        toast.error(`❌ Email error: ${data.error}`, { autoClose: 5000 });
+      }
+    } catch (error) {
+      console.error("Email sending failed:", error);
+      toast.error("❌ Failed to send confirmation email.");
+    }
+  };
 
   const onSubmit = async () => {
     if (!stripe || !elements || !clientSecret) return;
@@ -214,7 +233,17 @@ const CheckoutForm = ({ clientSecret }) => {
         setSuccess(true);
         setShowConfetti(true);
         toast.success("🎉 Payment successful!", { autoClose: 5000 });
+        const roomDetails = JSON.parse(localStorage.getItem("bookings"))?.[0];
+        const email = roomDetails?.email; // Ensure email is stored in the booking
+        const bookingDetails = {
+          roomName: roomDetails?.roomDetails?.name || "Luxury Suite",
+          checkinDate: roomDetails?.checkinDate,
+          checkoutDate: roomDetails?.checkoutDate,
+          totalPrice: roomDetails?.roomDetails?.price * (roomDetails?.roomQuantity || 1),
+        };
 
+        // Send confirmation email
+        await sendConfirmationEmail(email, bookingDetails, paymentIntent.id);
         setTimeout(() => {
           setShowConfetti(false);
         }, 10000);
@@ -228,7 +257,7 @@ const CheckoutForm = ({ clientSecret }) => {
 
   return (
     <Container className="payment-container">
-      <RoomDetailsCard/>
+      <RoomDetailsCard />
       {showConfetti && <Confetti />}
       <Card className="payment-card glassmorphism-card">
         <Card.Body>
@@ -270,10 +299,10 @@ const Payment = () => {
 
   useEffect(() => {
     if (!selectedPayment) return;
-  
+
     const roomDetails = JSON.parse(localStorage.getItem("bookings"));
     console.log("Room Details:", roomDetails);
-  
+
     if (
       !roomDetails ||
       !roomDetails[0].roomDetails.price ||
@@ -285,26 +314,26 @@ const Payment = () => {
       toast.error("❌ Missing booking details!", { autoClose: 5000 });
       return;
     }
-  
+
     // Convert dates to JavaScript Date objects
     const checkinDate = new Date(roomDetails[0].checkinDate);
     const checkoutDate = new Date(roomDetails[0].checkoutDate);
     // const guestCount = parseInt(roomDetails[0].guests, 10) || 1; // Default 1 guest if missing
     const roomQuantity = parseInt(roomDetails[0].roomQuantity, 10) || 1; // Default 1 room if missing
-  
+
     console.log("Check-in:", checkinDate, "Check-out:", checkoutDate);
     // console.log("Guests:", guestCount, "Rooms:", roomQuantity);
-  
+
     // Calculate the number of days
     const timeDiff = checkoutDate - checkinDate;
     const numDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) || 1; // Ensure at least 1 day
-  
+
     // Calculate total amount
     const roomPrice = roomDetails[0].roomDetails.price;
-    const totalAmount = numDays * roomPrice  * roomQuantity;
-  
+    const totalAmount = numDays * roomPrice * roomQuantity;
+
     console.log(`Total Amount for ${numDays} days: AED ${totalAmount}`);
-  
+
     fetch("https://freelance-backend-1-51yh.onrender.com/api/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -326,7 +355,7 @@ const Payment = () => {
         toast.error("❌ Error fetching payment details!", { autoClose: 5000 });
       });
   }, [selectedPayment]);
-  
+
 
 
 
