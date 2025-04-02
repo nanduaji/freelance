@@ -236,10 +236,14 @@ const CheckoutForm = ({ clientSecret }) => {
         const roomDetails = JSON.parse(localStorage.getItem("bookings"))?.[0];
         const email = roomDetails?.email; // Ensure email is stored in the booking
         const bookingDetails = {
+          userName:roomDetails?.name || "Guest",
           roomName: roomDetails?.roomDetails?.name || "Luxury Suite",
           checkinDate: roomDetails?.checkinDate,
           checkoutDate: roomDetails?.checkoutDate,
+          unitPrice: roomDetails?.roomDetails?.price,
           totalPrice: roomDetails?.roomDetails?.price * (roomDetails?.roomQuantity || 1),
+          roomQuantity: roomDetails?.roomQuantity || 1,
+          totalAmount: localStorage.getItem("totalAmount"),
         };
 
         // Send confirmation email
@@ -331,10 +335,10 @@ const Payment = () => {
     // Calculate total amount
     const roomPrice = roomDetails[0].roomDetails.price;
     const totalAmount = numDays * roomPrice * roomQuantity;
-
+    localStorage.setItem("totalAmount", totalAmount);
     console.log(`Total Amount for ${numDays} days: AED ${totalAmount}`);
 
-    fetch("https://freelance-backend-1-51yh.onrender.com/api/create-payment-intent", {
+    fetch("http://localhost:3001/api/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount: totalAmount }),
