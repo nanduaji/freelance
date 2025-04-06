@@ -82,7 +82,18 @@ const RoomDetailsCard = () => {
   const daysBooked = timeDiff > 0 ? Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) : 1;
 
   // Calculate total price
-  const totalPrice = pricePerNight * daysBooked * roomQuantity;
+  const basePrice = pricePerNight * daysBooked * roomQuantity;
+
+  const VAT = basePrice * 0.05;  // 5%
+  const cleaningFee = 20 * daysBooked;
+  const tourismFee = 10 * daysBooked;
+  const serviceCharge = basePrice * 0.10;  // 10%
+  const municipalityFee = basePrice * 0.07;  // 7%
+
+  const totalPrice = basePrice + VAT + cleaningFee + tourismFee + serviceCharge + municipalityFee;
+
+  // Store final price in localStorage to send to backend
+  // localStorage.setItem("totalPrice", totalPrice.toFixed(2));
 
   return (
     <Container className="d-flex justify-content-center mt-5 mb-5">
@@ -236,14 +247,14 @@ const CheckoutForm = ({ clientSecret }) => {
         const roomDetails = JSON.parse(localStorage.getItem("bookings"))?.[0];
         const email = roomDetails?.email; // Ensure email is stored in the booking
         const bookingDetails = {
-          userName:roomDetails?.name || "Guest",
+          userName: roomDetails?.name || "Guest",
           roomName: roomDetails?.roomDetails?.name || "Luxury Suite",
           checkinDate: roomDetails?.checkinDate,
           checkoutDate: roomDetails?.checkoutDate,
           unitPrice: roomDetails?.roomDetails?.price,
           totalPrice: roomDetails?.roomDetails?.price * (roomDetails?.roomQuantity || 1),
           roomQuantity: roomDetails?.roomQuantity || 1,
-          totalAmount: localStorage.getItem("totalAmount"),
+          totalAmount: localStorage.getItem("totalPrice"),
         };
 
         // Send confirmation email
@@ -334,14 +345,24 @@ const Payment = () => {
 
     // Calculate total amount
     const roomPrice = roomDetails[0].roomDetails.price;
-    const totalAmount = numDays * roomPrice * roomQuantity;
-    localStorage.setItem("totalAmount", totalAmount);
-    console.log(`Total Amount for ${numDays} days: AED ${totalAmount}`);
+    const basePrice = numDays * roomPrice * roomQuantity;
 
-    fetch("http://localhost:3001/api/create-payment-intent", {
+    const VAT = basePrice * 0.05;  // 5%
+    const cleaningFee = 20 * numDays;
+    const tourismFee = 10 * numDays;
+    const serviceCharge = basePrice * 0.10;  // 10%
+    const municipalityFee = basePrice * 0.07;  // 7%
+
+    const totalPrice = basePrice + VAT + cleaningFee + tourismFee + serviceCharge + municipalityFee;
+
+
+    localStorage.setItem("totalPrice", totalPrice);
+    console.log(`Total Amount for ${numDays} days: AED ${totalPrice}`);
+
+    fetch("https://freelance-backend-1-51yh.onrender.com/api/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: totalAmount }),
+      body: JSON.stringify({ amount: totalPrice }),
     })
       .then((res) => res.json())
       .then((data) => {
