@@ -76,12 +76,11 @@ const RoomDetailsCard = () => {
   const basePrice = pricePerNight * daysBooked * roomQuantity;
 
   const VAT = basePrice * 0.05;
-  const cleaningFee = 20 * daysBooked;
   const tourismFee = 10 * daysBooked;
   const serviceCharge = basePrice * 0.10;
   const municipalityFee = basePrice * 0.07;
 
-  const totalPrice = basePrice + VAT + cleaningFee + tourismFee + serviceCharge + municipalityFee;
+  const totalPrice = basePrice + VAT +  tourismFee + serviceCharge + municipalityFee;
 
   return (
     <Container className="d-flex justify-content-center mt-5 mb-5">
@@ -141,17 +140,33 @@ const CheckoutForm = ({ clientSecret }) => {
     const checkoutDate = new Date(roomDetails[0].checkoutDate);
     const roomQuantity = parseInt(roomDetails[0].roomQuantity, 10) || 1;
 
-    const timeDiff = checkoutDate - checkinDate;
-    const daysBooked = timeDiff > 0 ? Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) : 1;
+    const daysBooked = Math.max(
+      1,
+      Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24))
+    );
+    console.log("roomDetails", roomDetails[0].roomDetails.price);
+    const basePrice = roomDetails[0].roomDetails.price * daysBooked * roomQuantity;
+    const VAT = basePrice * 0.05;
+    const tourismFee = 10 * daysBooked;
+    const serviceCharge = basePrice * 0.1;
+    const municipalityFee = basePrice * 0.07;
+    console.log("basePrice", basePrice);
+    console.log("VAT", VAT);
+    console.log("tourismFee", tourismFee);
+    console.log("serviceCharge", serviceCharge);
+    console.log("municipalityFee", municipalityFee);
+    const totalPrice =
+      basePrice + VAT + tourismFee + serviceCharge + municipalityFee;
+    console.log("totalPrice", totalPrice);
+    const finalAmount = Math.round(totalPrice); 
 
-    const amount = roomDetails[0].roomDetails.price * daysBooked * roomQuantity;
-    console.log("Amount to be charged:", amount);
+    console.log("Final Amount:", finalAmount);
     const paymentRequest = stripe.paymentRequest({
       country: "AE",
       currency: "aed",
       total: {
         label: "Room Booking",
-        amount,
+        amount:finalAmount,
       },
       requestPayerName: true,
       requestPayerEmail: true,
@@ -168,17 +183,17 @@ const CheckoutForm = ({ clientSecret }) => {
       environment: 'TEST', // Change to PRODUCTION for live
     });
 
-    paymentsClient.isReadyToPay(googlePayConfig(amount.toString()))
+    paymentsClient.isReadyToPay(googlePayConfig(finalAmount.toString()))
       .then(response => {
         if (response.result) {
           const button = paymentsClient.createButton({
             onClick: async () => {
               try {
-                const paymentData = await paymentsClient.loadPaymentData(googlePayConfig(amount.toString()));
+                const paymentData = await paymentsClient.loadPaymentData(googlePayConfig(finalAmount.toString()));
                 const token = JSON.parse(paymentData.paymentMethodData.tokenizationData.token).id;
 
                 const { data } = await axios.post('https://freelance-backend-1-51yh.onrender.com/create-payment-intent-google-pay', {
-                  amount: amount,
+                  amount: finalAmount,
                   token: token,
                 });
 
@@ -196,6 +211,10 @@ const CheckoutForm = ({ clientSecret }) => {
                     totalPrice: roomDetails?.roomDetails?.price * (roomDetails?.roomQuantity || 1),
                     roomQuantity: roomDetails?.roomQuantity || 1,
                     totalAmount: localStorage.getItem("totalPrice"),
+                    VAT: (roomDetails?.roomDetails?.price * 0.05) || 0,
+                    tourismFee: 10 * (roomDetails?.roomQuantity || 1) || 0,
+                    serviceCharge: (roomDetails?.roomDetails?.price * 0.1) || 0,
+                    municipalityFee: (roomDetails?.roomDetails?.price * 0.07) || 0,
                   };
 
                   await sendConfirmationEmail(email, bookingDetails, "GooglePay");
@@ -272,6 +291,10 @@ const CheckoutForm = ({ clientSecret }) => {
           totalPrice: roomDetails?.roomDetails?.price * (roomDetails?.roomQuantity || 1),
           roomQuantity: roomDetails?.roomQuantity || 1,
           totalAmount: localStorage.getItem("totalPrice"),
+          VAT: (roomDetails?.roomDetails?.price * 0.05) || 0,
+          tourismFee: 10 * (roomDetails?.roomQuantity || 1) || 0,
+          serviceCharge: (roomDetails?.roomDetails?.price * 0.1) || 0,
+          municipalityFee: (roomDetails?.roomDetails?.price * 0.07) || 0,
         };
 
         await sendConfirmationEmail(email, bookingDetails, paymentIntent.id);
@@ -431,12 +454,11 @@ const Payment = () => {
     const basePrice = numDays * roomPrice * roomQuantity;
 
     const VAT = basePrice * 0.05;
-    const cleaningFee = 20 * numDays;
     const tourismFee = 10 * numDays;
     const serviceCharge = basePrice * 0.10;
     const municipalityFee = basePrice * 0.07;
 
-    const totalPrice = basePrice + VAT + cleaningFee + tourismFee + serviceCharge + municipalityFee;
+    const totalPrice = basePrice + VAT + tourismFee + serviceCharge + municipalityFee;
 
     localStorage.setItem("totalPrice", totalPrice);
 
