@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from 'axios';
 import { Modal, Button, Card, Container, Spinner, ProgressBar, Alert, Row, Col, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, useStripe, useElements, CardElement, PaymentElement } from "@stripe/react-stripe-js";
+import { Elements, useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 import { toast } from "react-toastify";
 import Confetti from "react-confetti";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,25 +11,20 @@ import "./Payment.module.css";
 import { motion } from "framer-motion";
 import { PaymentRequestButtonElement } from "@stripe/react-stripe-js";
 import { Badge } from "react-bootstrap";
-
-
+import { googlePayConfig } from './googlePayConfig';
 const stripeKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(stripeKey);
-
-// Payment options as before
-
 
 const paymentOptions = [
   { id: "card", name: "Card", icon: "💳" },
   { id: "apple_pay", name: "Apple Pay", icon: "🍏" },
   { id: "google_pay", name: "Google Pay", icon: "📱" },
-  //  { id: "paypal", name: "PayPal", icon: "🅿️" },
-  // { id: "crypto", name: "Crypto", icon: "₿" },
-  //  { id: "bank_transfer", name: "Bank", icon: "🏦" },
   { id: "stripe_link", name: "Stripe Link", icon: "🔗" },
 ];
-
-
+const handleOptionSelect = (onSelect, option) => {
+  onSelect(option.id);
+  localStorage.setItem("selectedPayment", option.id);
+}
 const PaymentOptionsModal = ({ onSelect }) => {
   return (
     <Modal show centered backdrop="static" className="luxury-modal">
@@ -46,8 +42,8 @@ const PaymentOptionsModal = ({ onSelect }) => {
               >
                 <Card
                   className="payment-option-card glass-effect d-flex flex-column align-items-center justify-content-center"
-                  onClick={() => onSelect(option.id)} // Ensure clicking a card selects a payment method
-                  style={{ cursor: "pointer" }} // Makes the card clickable
+                  onClick={() => handleOptionSelect(onSelect, option)}
+                  style={{ cursor: "pointer" }}
                 >
                   <Card.Body className="p-4 text-center">
                     <div className="payment-icon">{option.icon}</div>
@@ -64,46 +60,36 @@ const PaymentOptionsModal = ({ onSelect }) => {
 };
 
 const RoomDetailsCard = () => {
-  const roomDetails = JSON.parse(localStorage.getItem("bookings"))?.[0]; // Get first booking
-  console.log("roomDetails", roomDetails)
+  const roomDetails = JSON.parse(localStorage.getItem("bookings"))?.[0];
   const roomName = localStorage.getItem("roomName") || "Luxury Suite";
   const roomDescription = localStorage.getItem("roomDescription") || "A premium room with breathtaking views.";
-  const roomImage = roomDetails?.roomDetails?.image || "https://source.unsplash.com/800x400/?luxury,hotel"; // Default image
-  // const guestCount = parseInt(roomDetails?.guests, 10) || 1; // Default 1 guest
-  const roomQuantity = parseInt(roomDetails?.roomQuantity, 10) || 1; // Default 1 room
-  const pricePerNight = parseFloat(roomDetails?.roomDetails?.price) || 100; // Default price
+  const roomImage = roomDetails?.roomDetails?.image || "https://source.unsplash.com/800x400/?luxury,hotel";
+  const roomQuantity = parseInt(roomDetails?.roomQuantity, 10) || 1;
+  const pricePerNight = parseFloat(roomDetails?.roomDetails?.price) || 100;
 
-  // Convert check-in and check-out dates to JavaScript Date objects
   const checkinDate = new Date(roomDetails?.checkinDate);
   const checkoutDate = new Date(roomDetails?.checkoutDate);
 
-  // Calculate the number of days (ensure at least 1 day is charged)
   const timeDiff = checkoutDate - checkinDate;
   const daysBooked = timeDiff > 0 ? Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) : 1;
 
-  // Calculate total price
   const basePrice = pricePerNight * daysBooked * roomQuantity;
 
-  const VAT = basePrice * 0.05;  // 5%
+  const VAT = basePrice * 0.05;
   const cleaningFee = 20 * daysBooked;
   const tourismFee = 10 * daysBooked;
-  const serviceCharge = basePrice * 0.10;  // 10%
-  const municipalityFee = basePrice * 0.07;  // 7%
+  const serviceCharge = basePrice * 0.10;
+  const municipalityFee = basePrice * 0.07;
 
   const totalPrice = basePrice + VAT + cleaningFee + tourismFee + serviceCharge + municipalityFee;
-
-  // Store final price in localStorage to send to backend
-  // localStorage.setItem("totalPrice", totalPrice.toFixed(2));
 
   return (
     <Container className="d-flex justify-content-center mt-5 mb-5">
       <Card className="room-details-card glassmorphism-card shadow-lg overflow-hidden" style={{ maxWidth: "500px", borderRadius: "15px" }}>
         <Card.Img variant="top" src={roomImage} alt="Room Image" className="room-image" />
-
         <Card.Body className="text-center p-4">
           <h3 className="fw-bold text-gold">{roomName}</h3>
           <p className="text-muted mb-3">{roomDescription}</p>
-
           <div className="d-flex flex-wrap justify-content-center gap-2 mt-3">
             <Badge pill bg="primary" className="fs-6 px-4 py-2 shadow-sm">
               🏠 Rooms: {roomQuantity}
@@ -112,25 +98,22 @@ const RoomDetailsCard = () => {
               📅 Nights: {daysBooked}
             </Badge>
           </div>
-
           <div className="mt-4">
             <Badge pill bg="success" className="fs-5 px-4 py-2 shadow-lg">
               {new Intl.NumberFormat("en-AE", { style: "currency", currency: "AED" }).format(totalPrice)}
             </Badge>
           </div>
         </Card.Body>
-
       </Card>
     </Container>
   );
 };
 
-
-
 const CheckoutForm = ({ clientSecret }) => {
   const { handleSubmit } = useForm();
   const stripe = useStripe();
   const elements = useElements();
+  const buttonRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [progress, setProgress] = useState(0);
@@ -138,52 +121,37 @@ const CheckoutForm = ({ clientSecret }) => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [paymentRequestButton, setPaymentRequestButton] = useState(null);
 
-  // Create a PaymentRequest for Apple Pay
   useEffect(() => {
     if (!stripe) return;
 
     const roomDetails = JSON.parse(localStorage.getItem("bookings"));
-    console.log("Room Details:", roomDetails);
 
     if (
       !roomDetails ||
       !roomDetails[0].roomDetails.price ||
       !roomDetails[0].checkinDate ||
       !roomDetails[0].checkoutDate ||
-      // !roomDetails[0].guests ||
       !roomDetails[0].roomQuantity
     ) {
       toast.error("❌ Missing booking details!", { autoClose: 5000 });
       return;
     }
 
-    // Convert check-in and check-out dates to JavaScript Date objects
     const checkinDate = new Date(roomDetails[0].checkinDate);
     const checkoutDate = new Date(roomDetails[0].checkoutDate);
-    // const guestCount = parseInt(roomDetails[0].guests, 10) || 1; // Default 1 guest if missing
-    const roomQuantity = parseInt(roomDetails[0].roomQuantity, 10) || 1; // Default 1 room if missing
+    const roomQuantity = parseInt(roomDetails[0].roomQuantity, 10) || 1;
 
-    console.log("Check-in:", checkinDate, "Check-out:", checkoutDate);
-    // console.log("Guests:", guestCount, "Rooms:", roomQuantity);
-
-    // Calculate the number of days (ensure at least 1 day is charged)
     const timeDiff = checkoutDate - checkinDate;
     const daysBooked = timeDiff > 0 ? Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) : 1;
 
-    // Calculate total price
     const amount = roomDetails[0].roomDetails.price * daysBooked * roomQuantity;
-
-    // console.log(
-    //   `Check-in: ${checkinDate}, Check-out: ${checkoutDate}, Days: ${daysBooked}, Guests: ${guestCount}, Rooms: ${roomQuantity}, Amount: ${amount}`
-    // );
-
-    // Create Apple Pay payment request
+    console.log("Amount to be charged:", amount);
     const paymentRequest = stripe.paymentRequest({
       country: "AE",
       currency: "aed",
       total: {
         label: "Room Booking",
-        amount, // Use dynamically calculated amount
+        amount,
       },
       requestPayerName: true,
       requestPayerEmail: true,
@@ -191,12 +159,65 @@ const CheckoutForm = ({ clientSecret }) => {
 
     paymentRequest.canMakePayment().then((result) => {
       if (result?.applePay) {
-        console.log("✅ Apple Pay is supported.");
         setPaymentRequestButton(paymentRequest);
-      } else {
-        console.log("❌ Apple Pay is NOT supported.");
       }
     });
+
+    // Google Pay
+    const paymentsClient = new window.google.payments.api.PaymentsClient({
+      environment: 'TEST', // Change to PRODUCTION for live
+    });
+
+    paymentsClient.isReadyToPay(googlePayConfig(amount.toString()))
+      .then(response => {
+        if (response.result) {
+          const button = paymentsClient.createButton({
+            onClick: async () => {
+              try {
+                const paymentData = await paymentsClient.loadPaymentData(googlePayConfig(amount.toString()));
+                const token = JSON.parse(paymentData.paymentMethodData.tokenizationData.token).id;
+
+                const { data } = await axios.post('https://freelance-backend-1-51yh.onrender.com/create-payment-intent-google-pay', {
+                  amount: amount,
+                  token: token,
+                });
+
+                if (data.success && data.status === 'succeeded') {
+                  alert('✅ Payment Successful!');
+                  setShowConfetti(true);
+                  const roomDetails = JSON.parse(localStorage.getItem("bookings"))?.[0];
+                  const email = roomDetails?.email;
+                  const bookingDetails = {
+                    userName: roomDetails?.name || "Guest",
+                    roomName: roomDetails?.roomDetails?.name || "Luxury Suite",
+                    checkinDate: roomDetails?.checkinDate,
+                    checkoutDate: roomDetails?.checkoutDate,
+                    unitPrice: roomDetails?.roomDetails?.price,
+                    totalPrice: roomDetails?.roomDetails?.price * (roomDetails?.roomQuantity || 1),
+                    roomQuantity: roomDetails?.roomQuantity || 1,
+                    totalAmount: localStorage.getItem("totalPrice"),
+                  };
+
+                  await sendConfirmationEmail(email, bookingDetails, "GooglePay");
+                  setTimeout(() => {
+                    setShowConfetti(false);
+                  }, 10000);
+                } else {
+                  alert('❌ Payment Failed!');
+                }
+              } catch (err) {
+                console.error('Google Pay Error:', err);
+                alert('❌ Payment Error: ' + err.message);
+              }
+            }
+          });
+
+          if (buttonRef.current) {
+            buttonRef.current.innerHTML = '';
+            buttonRef.current.appendChild(button);
+          }
+        }
+      });
   }, [stripe]);
 
   const sendConfirmationEmail = async (email, bookingDetails, paymentIntentId) => {
@@ -214,7 +235,6 @@ const CheckoutForm = ({ clientSecret }) => {
         toast.error(`❌ Email error: ${data.error}`, { autoClose: 5000 });
       }
     } catch (error) {
-      console.error("Email sending failed:", error);
       toast.error("❌ Failed to send confirmation email.");
     }
   };
@@ -228,9 +248,6 @@ const CheckoutForm = ({ clientSecret }) => {
     try {
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
-        // confirmParams: {
-        //   // return_url: window.location.origin, 
-        // },
         redirect: "if_required",
       });
 
@@ -245,7 +262,7 @@ const CheckoutForm = ({ clientSecret }) => {
         setShowConfetti(true);
         toast.success("🎉 Payment successful!", { autoClose: 5000 });
         const roomDetails = JSON.parse(localStorage.getItem("bookings"))?.[0];
-        const email = roomDetails?.email; // Ensure email is stored in the booking
+        const email = roomDetails?.email;
         const bookingDetails = {
           userName: roomDetails?.name || "Guest",
           roomName: roomDetails?.roomDetails?.name || "Luxury Suite",
@@ -257,7 +274,6 @@ const CheckoutForm = ({ clientSecret }) => {
           totalAmount: localStorage.getItem("totalPrice"),
         };
 
-        // Send confirmation email
         await sendConfirmationEmail(email, bookingDetails, paymentIntent.id);
         setTimeout(() => {
           setShowConfetti(false);
@@ -266,46 +282,122 @@ const CheckoutForm = ({ clientSecret }) => {
     } catch (err) {
       setError("Something went wrong.");
       toast.error("❌ Payment failed. Please try again.", { autoClose: 5000 });
-      console.error("Payment error:", err);
     }
   };
-
+  const selectedPayment = localStorage.getItem("selectedPayment") || "card";
   return (
     <Container className="payment-container">
       <RoomDetailsCard />
       {showConfetti && <Confetti />}
-      <Card className="payment-card glassmorphism-card">
-        <Card.Body>
-          <Card.Title className="text-center payment-title">💳 Secure Premium Payment</Card.Title>
-          <Form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <Form.Group className="mb-3">
-              <Form.Label className="fw-bold">Payment Details</Form.Label>
-              <div className="p-3 border rounded card-input">
-                <PaymentElement /> {/* Stripe Link + Cards + Other Payment Methods */}
-              </div>
-            </Form.Group>
-            {paymentRequestButton && (
-              <div className="apple-pay-container mt-3">
-                <PaymentRequestButtonElement options={{ paymentRequest: paymentRequestButton }} />
-              </div>
-            )}
-            {error && <Alert variant="danger" className="text-center fade-in">{error}</Alert>}
-            {success && <Alert variant="success" className="text-center fw-bold fade-in">✅ Payment successful!</Alert>}
 
-            {loading && <ProgressBar now={progress} animated striped variant="success" className="mb-3" />}
+      {selectedPayment === "card" && (
+        <Card className="payment-card glassmorphism-card">
+          <Card.Body>
+            <Card.Title className="text-center payment-title">
+              💳 Secure Premium Payment
+            </Card.Title>
+            <Form onSubmit={handleSubmit(onSubmit)} noValidate>
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-bold">Payment Details</Form.Label>
+                <div className="p-3 border rounded card-input">
+                  <PaymentElement />
+                </div>
+              </Form.Group>
 
-            <div className="text-center">
-              <Button type="submit" variant="dark" disabled={!stripe || loading} className="pay-button">
-                {loading ? <Spinner animation="border" size="sm" /> : "💎 Pay Securely"}
-              </Button>
+              {error && (
+                <Alert
+                  variant="danger"
+                  className="text-center fade-in"
+                >
+                  {error}
+                </Alert>
+              )}
+              {success && (
+                <Alert
+                  variant="success"
+                  className="text-center fw-bold fade-in"
+                >
+                  ✅ Payment successful!
+                </Alert>
+              )}
+              {loading && (
+                <ProgressBar
+                  now={progress}
+                  animated
+                  striped
+                  variant="success"
+                  className="mb-3"
+                />
+              )}
+              <div className="text-center">
+                <Button
+                  type="submit"
+                  variant="dark"
+                  disabled={!stripe || loading}
+                  className="pay-button"
+                >
+                  {loading ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    "💎 Pay Securely"
+                  )}
+                </Button>
+              </div>
+            </Form>
+          </Card.Body>
+        </Card>
+      )}
+
+      {selectedPayment === "apple_pay" && (
+        <>
+          {paymentRequestButton ? (
+            <div className="apple-pay-container mt-4 text-center">
+              <h2 className="fw-bold text-gold mb-4"> Pay Instantly with Apple Pay</h2>
+              <div className="glassmorphism-card p-4 d-inline-block">
+                <PaymentRequestButtonElement
+                  options={{ paymentRequest: paymentRequestButton }}
+                />
+              </div>
+              <p className="mt-3 text-muted small fst-italic">
+                Seamless · Secure · Private
+              </p>
             </div>
-          </Form>
-        </Card.Body>
-      </Card>
+          ) : (
+            <div className="fallback-container text-center mt-4">
+              <img src="apple_pay.png" alt="No Apple Pay" style={{ maxWidth: "120px" }} />
+              <p className="fw-bold text-danger mt-3">Apple Pay is not available on this device.</p>
+              <p className="text-muted small">Try another payment method.</p>
+            </div>
+          )}
+        </>
+      )}
+
+      {selectedPayment === "google_pay" && (
+        <>
+          {window?.google ? (
+            <div className="google-pay-container text-center mt-4">
+              <h2 className="fw-bold text-gold mb-4">Google Pay</h2>
+              <div className="glassmorphism-card p-4 d-inline-block">
+                <div ref={buttonRef} className="google-pay-button-wrapper"></div>
+              </div>
+              <p className="mt-3 text-muted small fst-italic">
+                Fast · Secure · 1-Click Checkout
+              </p>
+            </div>
+          ) : (
+            <div className="fallback-container text-center mt-4">
+              <img src="/no-google-pay.svg" alt="No Google Pay" style={{ maxWidth: "120px" }} />
+              <p className="fw-bold text-danger mt-3">Google Pay is not available on this device.</p>
+              <p className="text-muted small">Try another payment method.</p>
+            </div>
+          )}
+        </>
+      )}
+
     </Container>
+
   );
 };
-
 
 const Payment = () => {
   const [clientSecret, setClientSecret] = useState("");
@@ -316,48 +408,37 @@ const Payment = () => {
     if (!selectedPayment) return;
 
     const roomDetails = JSON.parse(localStorage.getItem("bookings"));
-    console.log("Room Details:", roomDetails);
 
     if (
       !roomDetails ||
       !roomDetails[0].roomDetails.price ||
       !roomDetails[0].checkinDate ||
       !roomDetails[0].checkoutDate ||
-      // !roomDetails[0].guests ||
       !roomDetails[0].roomQuantity
     ) {
       toast.error("❌ Missing booking details!", { autoClose: 5000 });
       return;
     }
 
-    // Convert dates to JavaScript Date objects
     const checkinDate = new Date(roomDetails[0].checkinDate);
     const checkoutDate = new Date(roomDetails[0].checkoutDate);
-    // const guestCount = parseInt(roomDetails[0].guests, 10) || 1; // Default 1 guest if missing
-    const roomQuantity = parseInt(roomDetails[0].roomQuantity, 10) || 1; // Default 1 room if missing
+    const roomQuantity = parseInt(roomDetails[0].roomQuantity, 10) || 1;
 
-    console.log("Check-in:", checkinDate, "Check-out:", checkoutDate);
-    // console.log("Guests:", guestCount, "Rooms:", roomQuantity);
-
-    // Calculate the number of days
     const timeDiff = checkoutDate - checkinDate;
-    const numDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) || 1; // Ensure at least 1 day
+    const numDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) || 1;
 
-    // Calculate total amount
     const roomPrice = roomDetails[0].roomDetails.price;
     const basePrice = numDays * roomPrice * roomQuantity;
 
-    const VAT = basePrice * 0.05;  // 5%
+    const VAT = basePrice * 0.05;
     const cleaningFee = 20 * numDays;
     const tourismFee = 10 * numDays;
-    const serviceCharge = basePrice * 0.10;  // 10%
-    const municipalityFee = basePrice * 0.07;  // 7%
+    const serviceCharge = basePrice * 0.10;
+    const municipalityFee = basePrice * 0.07;
 
     const totalPrice = basePrice + VAT + cleaningFee + tourismFee + serviceCharge + municipalityFee;
 
-
     localStorage.setItem("totalPrice", totalPrice);
-    console.log(`Total Amount for ${numDays} days: AED ${totalPrice}`);
 
     fetch("https://freelance-backend-1-51yh.onrender.com/api/create-payment-intent", {
       method: "POST",
@@ -376,20 +457,14 @@ const Payment = () => {
         }
       })
       .catch((err) => {
-        console.error("Error fetching clientSecret:", err);
         toast.error("❌ Error fetching payment details!", { autoClose: 5000 });
       });
   }, [selectedPayment]);
 
-
-
-
-  // Show payment options first
   if (!selectedPayment) {
     return <PaymentOptionsModal onSelect={setSelectedPayment} />;
   }
 
-  // Show loading spinner while fetching the client secret
   if (!clientSecret) {
     return (
       <Container className="loading-container text-center mt-5">
@@ -399,7 +474,6 @@ const Payment = () => {
     );
   }
 
-  // Show checkout form when ready
   return (
     <Elements stripe={stripePromise} options={{ clientSecret }}>
       <CheckoutForm clientSecret={clientSecret} />
