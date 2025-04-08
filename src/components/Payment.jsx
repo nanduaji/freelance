@@ -165,7 +165,7 @@ const CheckoutForm = ({ clientSecret }) => {
 
     // Google Pay
     const paymentsClient = new window.google.payments.api.PaymentsClient({
-      environment: 'PRODUCTION', // Change to PRODUCTION for live
+      environment: 'TEST', // Change to PRODUCTION for live
     });
 
     paymentsClient.isReadyToPay(googlePayConfig(amount.toString()))
